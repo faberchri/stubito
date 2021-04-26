@@ -9,8 +9,15 @@ enum AvalancheRisk {
 }
 
 @immutable
-class TourKey {
-  final uuid = Uuid();
+class TourKey extends Equatable {
+  static const uuidGen = Uuid();
+  final id = uuidGen.v1();
+
+  @override
+  List<Object> get props {
+    return [id];
+  }
+
 }
 
 @immutable

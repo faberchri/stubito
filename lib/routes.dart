@@ -9,5 +9,6 @@ import 'models/tour.dart';
 final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   TourOverview.routeName: (BuildContext context) => TourOverview(),
   //NewTour.routeName: (BuildContext context) => NewTour(tourModel: TourModel()),
-  '/new': (BuildContext context) => newTour(context)
+  //'/new': (BuildContext context) => NewTour(),
+  TourDetail.routeName: (BuildContext context) => TourDetail(),
 };

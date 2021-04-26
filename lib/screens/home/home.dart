@@ -17,13 +17,14 @@ class TourOverview extends StatelessWidget {
 
   }
 
-  void addTour(BuildContext context) {
-    Navigator.pushNamed(context, NewTour.routeName);
-  }
+  // void addTour(BuildContext context) {
+  //   Navigator.pushNamed(context, NewTour.routeName);
+  // }
 
   @override
   Widget build(BuildContext context) {
 
+    final tourListModel = context.watch<TourListModel>();
     return Scaffold(
       appBar: AppBar(
         title: Text('Deine Touren'),
@@ -32,8 +33,15 @@ class TourOverview extends StatelessWidget {
         ],
       ),
       body: Center(
-
-        child: RandomWords()
+          child: ListView(
+            children: tourListModel.allTours()
+                .map((e) => ListTile(
+                  title: Text(e.key.toString()),
+                  onTap: () {
+                    tourListModel.selectTour(e.key);
+                    Navigator.pushNamed(context, TourDetail.routeName);
+                  })).toList()
+          )
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -44,7 +52,8 @@ class TourOverview extends StatelessWidget {
           //tourListModel.removeEmptyTours();
           //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NewTour()));
           //Navigator.pushNamed(context, '/new');
-          
+          tourListModel.newTour();
+          Navigator.pushNamed(context, TourDetail.routeName);
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),

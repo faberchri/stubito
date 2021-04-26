@@ -4,18 +4,35 @@ import 'package:tour_log/models/tour.dart';
 
 class TourListModel extends ChangeNotifier {
 
-  final _tours_by_key = Map<TourKey, List<TourModel>>();
+  final _toursByKey = Map<TourKey, List<TourModel>>();
+  TourKey? _selected;
 
   TourModel newTour() {
     final newModel = TourModel();
-    this._tours_by_key[newModel.key] = [newModel];
+    this._toursByKey[newModel.key] = [newModel];
+
+    //print(_tours_by_key.length);
+    this._selected = newModel.key;
     notifyListeners();
-    print(_tours_by_key.length);
     return newModel;
+  }
+  
+  TourModel getSelectedOrNewTour() {
+    if (_selected != null) {
+      return this._toursByKey[_selected]!.last;
+    }
+    return newTour();
+  }
+
+  void selectTour(TourKey key) {
+    if (_toursByKey.containsKey(key)) {
+      this._selected = key;
+      notifyListeners();
+    }
   }
 
   void updateTour(TourModel newModel) {
-    this._tours_by_key.update(newModel.key,
+    this._toursByKey.update(newModel.key,
             (l) {l.add(newModel); return l;},
             ifAbsent: () => [newModel]
     );
@@ -23,21 +40,34 @@ class TourListModel extends ChangeNotifier {
   }
 
   void deleteTour(TourKey key) {
-    this._tours_by_key.remove(key);
-    notifyListeners();
+    final removedFromMap = this._toursByKey.remove(key) != null;
+    var unselected = false;
+    if (key == _selected) {
+      _selected = null;
+      unselected = true;
+    }
+    if (removedFromMap || unselected) {
+      notifyListeners();
+    }
   }
 
   void removeEmptyTours() {
-    var keysOfEmptyTours = _tours_by_key.values
+    var keysOfEmptyTours = _toursByKey.values
         .map((e) => e.last)
         .where((element) => element.hasAllDefaultValues())
         .map((e) => e.key).toSet();
-    _tours_by_key.removeWhere((key, value) => keysOfEmptyTours.contains(key));
-    notifyListeners();
+    _toursByKey.removeWhere((key, value) => keysOfEmptyTours.contains(key));
+    if (keysOfEmptyTours.contains(_selected)) {
+      _selected = null;
+    }
+    if (keysOfEmptyTours.isNotEmpty) {
+      notifyListeners();
+    }
   }
 
+
   List<TourModel> allTours() {
-    return _tours_by_key.values.map((e) => e.last).toList();
+    return _toursByKey.values.map((e) => e.last).toList();
   }
 
 }
