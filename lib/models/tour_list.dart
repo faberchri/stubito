@@ -1,4 +1,3 @@
-import 'package:english_words/english_words.dart';
 import 'package:flutter/foundation.dart';
 import 'package:tour_log/models/tour.dart';
 
@@ -10,8 +9,6 @@ class TourListModel extends ChangeNotifier {
   TourModel newTour() {
     final newModel = TourModel();
     this._toursByKey[newModel.key] = [newModel];
-
-    //print(_tours_by_key.length);
     this._selected = newModel.key;
     notifyListeners();
     return newModel;
@@ -65,9 +62,7 @@ class TourListModel extends ChangeNotifier {
     }
   }
 
-
   List<TourModel> allTours() {
     return _toursByKey.values.map((e) => e.last).toList();
   }
-
 }

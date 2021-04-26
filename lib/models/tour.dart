@@ -1,5 +1,3 @@
-
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
@@ -83,10 +81,5 @@ class TourModel extends Equatable {
     final defaultModel = TourModel(key: this.key, date: this.date);
     return defaultModel == this;
   }
-
-// TourModel(this.title) {
-  //   DateTime now = new DateTime.now();
-  //   this.date = new DateTime(now.year, now.month, now.day);
-  // }
 
 }
