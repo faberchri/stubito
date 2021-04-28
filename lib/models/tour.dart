@@ -82,4 +82,39 @@ class TourModel extends Equatable {
     return defaultModel == this;
   }
 
+  TourModel copy({
+    String? title,
+    DateTime? date,
+    String? location,
+    List<String>? participants,
+    String? routeDescription,
+    AvalancheRisk? avalancheRisk,
+    int? ascentAltitudeMeters,
+    Duration? ascentDuration,
+    String? weather,
+    String? temperature,
+    String? snowCondition,
+    String? perceivedRisk,
+    String? criticalSections,
+    String? remarks,
+  }) {
+    return TourModel(
+      key: this.key,
+      title: title ?? this.title,
+      date: date ?? this.date,
+      location: location ?? this.location,
+      participants: participants ?? this.participants,
+      routeDescription: routeDescription ?? this.routeDescription,
+      avalancheRisk: avalancheRisk ?? this.avalancheRisk,
+      ascentAltitudeMeters: ascentAltitudeMeters ?? this.ascentAltitudeMeters,
+      ascentDuration: ascentDuration ?? this.ascentDuration,
+      weather: weather ?? this.weather,
+      temperature: temperature ?? this.temperature,
+      snowCondition: snowCondition ?? this.snowCondition,
+      perceivedRisk: perceivedRisk ?? this.perceivedRisk,
+      criticalSections: criticalSections ?? this.criticalSections,
+      remarks: remarks ?? this.remarks,
+    );
+  }
+
 }

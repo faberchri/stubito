@@ -6,3 +6,7 @@ final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   TourOverview.routeName: (BuildContext context) => TourOverview(),
   TourDetail.routeName: (BuildContext context) => TourDetail(),
 };
+
+void navigateToDetail(BuildContext context) {
+  Navigator.pushNamed(context, TourDetail.routeName);
+}

@@ -30,9 +30,15 @@ class TourListModel extends ChangeNotifier {
 
   void updateTour(TourModel newModel) {
     this._toursByKey.update(newModel.key,
-            (l) {l.add(newModel); return l;},
-            ifAbsent: () => [newModel]
+            (l) {
+      if (l.last != newModel) {
+        l.add(newModel);
+      }
+      return l;
+      },
+        ifAbsent: () => [newModel]
     );
+    print(_toursByKey.values.map((e) => '${e.last.title}: ${e.length}').toList());
     notifyListeners();
   }
 
