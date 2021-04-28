@@ -13,7 +13,7 @@ class TourListModel extends ChangeNotifier {
     notifyListeners();
     return newModel;
   }
-  
+
   TourModel getSelectedOrNewTour() {
     if (_selected != null) {
       return this._toursByKey[_selected]!.last;

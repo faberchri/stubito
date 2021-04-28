@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:tour_log/models/tour.dart';
 import 'package:tour_log/models/tour_list.dart';
@@ -7,7 +5,6 @@ import 'package:tour_log/models/tour_list.dart';
 import '../../../routes.dart';
 
 class TourOverviewListEntry extends StatelessWidget {
-
 
   final TourModel tourModel;
   final TourListModel tourListModel;

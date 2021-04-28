@@ -4,6 +4,8 @@ import 'package:rxdart/rxdart.dart';
 import 'package:tour_log/models/tour.dart';
 import 'package:tour_log/models/tour_list.dart';
 
+import 'components/detail_text_input_field.dart';
+
 class TourDetail extends StatefulWidget {
 
   static const routeName = '/detail';
@@ -15,40 +17,85 @@ class TourDetail extends StatefulWidget {
 
 }
 
+typedef TourModel _TourModelUpdater(TourModel m);
+
 class _TourDetailState extends State<TourDetail> {
 
   final titleSubject = BehaviorSubject<String>();
+  final dateSubject = BehaviorSubject<DateTime>();
+  final locationSubject = BehaviorSubject<String>();
+  final participantsSubject = BehaviorSubject<List<String>>();
+  final routeDescriptionSubject = BehaviorSubject<String>();
+  final avalancheRiskSubject = BehaviorSubject<AvalancheRisk>();
+  final ascentAltitudeMetersSubject = BehaviorSubject<int>();
+  final ascentDurationSubject = BehaviorSubject<Duration>();
+  final weatherSubject = BehaviorSubject<String>();
+  final temperatureSubject = BehaviorSubject<String>();
+  final snowConditionSubject = BehaviorSubject<String>();
+  final perceivedRiskSubject = BehaviorSubject<String>();
+  final criticalSectionsSubject = BehaviorSubject<String>();
   final remarksSubject = BehaviorSubject<String>();
 
+  void _updateModel(BuildContext context, _TourModelUpdater updater) {
+    final l = context.read<TourListModel>();
+    final m = l.getSelectedOrNewTour();
+    l.updateTour(updater(m));
+  }
+
+  void _initModelUpdaters(BuildContext context) {
+    titleSubject.listen((value) {
+      _updateModel(context, (m) => m.copy(title: value));
+    });
+    dateSubject.listen((value) {
+      _updateModel(context, (m) => m.copy(date: value));
+    });
+    locationSubject.listen((value) {
+      _updateModel(context, (m) => m.copy(location: value));
+    });
+    participantsSubject.listen((value) {
+      _updateModel(context, (m) => m.copy(participants: value));
+    });
+    routeDescriptionSubject.listen((value) {
+      _updateModel(context, (m) => m.copy(routeDescription: value));
+    });
+    avalancheRiskSubject.listen((value) {
+      _updateModel(context, (m) => m.copy(avalancheRisk: value));
+    });
+    ascentAltitudeMetersSubject.listen((value) {
+      _updateModel(context, (m) => m.copy(ascentAltitudeMeters: value));
+    });
+    ascentDurationSubject.listen((value) {
+      _updateModel(context, (m) => m.copy(ascentDuration: value));
+    });
+    weatherSubject.listen((value) {
+      _updateModel(context, (m) => m.copy(weather: value));
+    });
+    temperatureSubject.listen((value) {
+      _updateModel(context, (m) => m.copy(temperature: value));
+    });
+    snowConditionSubject.listen((value) {
+      _updateModel(context, (m) => m.copy(snowCondition: value));
+    });
+    perceivedRiskSubject.listen((value) {
+      _updateModel(context, (m) => m.copy(perceivedRisk: value));
+    });
+    criticalSectionsSubject.listen((value) {
+      _updateModel(context, (m) => m.copy(criticalSections: value));
+    });
+    remarksSubject.listen((value) {
+      _updateModel(context, (m) => m.copy(remarks: value));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final tourListModel = context.read<TourListModel>();
     var initialModel = tourListModel.getSelectedOrNewTour();
 
-
-    //titleSubject.map((v) => (TourModel m) => m.copy(title: v));
-    //remarksSubject.map((v) => (TourModel m) => m.copy(remarks: v));
-
-    titleSubject.listen((value) {
-      final l = context.read<TourListModel>();
-      final m = tourListModel.getSelectedOrNewTour();
-      l.updateTour(m.copy(title: value));
-    });
-    remarksSubject.listen((value) {
-      final l = context.read<TourListModel>();
-      final m = tourListModel.getSelectedOrNewTour();
-      l.updateTour(m.copy(remarks: value));
-    });
-
-    //final debouncedTitleSubject = titleSubject.debounceTime(Duration(milliseconds: 500));
+    _initModelUpdaters(context);
 
     final titleField = TourDetailTextInputField('Title', initialModel.title, titleSubject);
     final remarksField = TourDetailTextInputField('Remarks', initialModel.remarks, remarksSubject);
-
-
-
-
 
     return Scaffold(
       appBar: AppBar(
@@ -58,13 +105,6 @@ class _TourDetailState extends State<TourDetail> {
           children: [
             titleField,
             remarksField,
-            // TourDetailTextInputField(
-            //     model.title,
-            //         (newValue) {
-            //       print(newValue);
-            //       final newModel = model.copy(title: newValue);
-            //       tourListModel.updateTour(newModel);
-            //     })
           ]
       ),
     );
@@ -73,103 +113,19 @@ class _TourDetailState extends State<TourDetail> {
   @override
   void dispose() {
     titleSubject.close();
+    dateSubject.close();
+    locationSubject.close();
+    participantsSubject.close();
+    routeDescriptionSubject.close();
+    avalancheRiskSubject.close();
+    ascentAltitudeMetersSubject.close();
+    ascentDurationSubject.close();
+    weatherSubject.close();
+    temperatureSubject.close();
+    snowConditionSubject.close();
+    perceivedRiskSubject.close();
+    criticalSectionsSubject.close();
     remarksSubject.close();
     super.dispose();
-  }
-}
-
-
-class TourDetailTextInputField extends StatefulWidget {
-
-  final String label;
-  final String initialValue;
-  final Subject<String> subject;
-
-  TourDetailTextInputField(this.label, this.initialValue, this.subject);
-
-  @override
-  State createState() {
-    return _TourDetailTextInputFieldState(this.label, initialValue, subject);
-  }
-}
-
-
-class _TourDetailTextInputFieldState extends State<TourDetailTextInputField> {
-
-  final String label;
-  final TextEditingController _controller;
-  //final FocusNode _focusNode;
-  final Subject<String> subject;
-  final _debounceChange = BehaviorSubject<String>();
-
-  _TourDetailTextInputFieldState(this.label, String value, this.subject)
-      : _controller = TextEditingController(text: value);
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //
-  //   title = model.title;
-  // }
-
-  @override
-  void initState() {
-    super.initState();
-
-    //_addToSubject();
-    //_controller.addListener(() {
-    //  //onChange(_controller.text);
-    //  _addToSubject();
-    //});
-
-    _debounceChange.debounceTime(Duration(milliseconds: 5000))
-        .listen((event) {print(event);
-        if (!this.subject.isClosed) {
-          this.subject.add(event);
-        }
-        });
-
-
-    _controller.addListener(() {
-      //onChange(_controller.text);
-      _debounceChange.add(_controller.text);
-    });
-
-
-    //_focusNode.addListener(() { })
-  }
-
-  void _addToSubject() {
-    subject.add(_controller.text);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    //_focusNode.dispose();
-    _debounceChange.close();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-            return Focus(
-              onFocusChange: (hasFocus){
-                if (!hasFocus) {
-                  this.subject.add(_controller.text);
-                }
-              },
-
-            child: TextField(
-                controller: _controller,
-                //focusNode: _focusNode,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: label
-                )
-            )
-            );
-
   }
 }
