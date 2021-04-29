@@ -2,9 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
-enum AvalancheRisk {
-  low, moderate, considerable, high, veryHigh
-}
+enum AvalancheRisk { low, moderate, considerable, high, veryHigh }
 
 @immutable
 class TourKey extends Equatable {
@@ -15,12 +13,10 @@ class TourKey extends Equatable {
   List<Object> get props {
     return [id];
   }
-
 }
 
 @immutable
 class TourModel extends Equatable {
-
   final TourKey key;
   final String title;
   final DateTime date;
@@ -50,32 +46,31 @@ class TourModel extends Equatable {
     this.weather = '',
     this.temperature = '',
     this.snowCondition = '',
-    this.perceivedRisk  = '',
+    this.perceivedRisk = '',
     this.criticalSections = '',
     this.remarks = '',
-  }) :
-        this.key = key ?? TourKey(),
+  })  : this.key = key ?? TourKey(),
         this.date = date ?? DateTime.now(),
         this.participants = List.unmodifiable(participants);
 
   @override
   List<Object> get props => [
-    key,
-    title,
-    date,
-    location,
-    participants,
-    routeDescription,
-    avalancheRisk,
-    ascentAltitudeMeters,
-    ascentDuration,
-    weather,
-    temperature,
-    snowCondition,
-    perceivedRisk,
-    criticalSections,
-    remarks
-  ];
+        key,
+        title,
+        date,
+        location,
+        participants,
+        routeDescription,
+        avalancheRisk,
+        ascentAltitudeMeters,
+        ascentDuration,
+        weather,
+        temperature,
+        snowCondition,
+        perceivedRisk,
+        criticalSections,
+        remarks
+      ];
 
   bool hasAllDefaultValues() {
     final defaultModel = TourModel(key: this.key, date: this.date);
@@ -116,5 +111,4 @@ class TourModel extends Equatable {
       remarks: remarks ?? this.remarks,
     );
   }
-
 }

@@ -1,18 +1,16 @@
-import 'dart:collection';
-
 import 'package:flutter/foundation.dart';
 import 'package:tour_log/models/tour.dart';
 
 class TourListModel extends ChangeNotifier {
-
   final _toursByKey = Map<TourKey, List<TourModel>>();
   TourKey? _selected;
 
   TourModel newTour() {
     final newModel = TourModel();
+    print(newModel);
     this._toursByKey[newModel.key] = [newModel];
     this._selected = newModel.key;
-    notifyListeners();
+    _notify();
     return newModel;
   }
 
@@ -20,51 +18,34 @@ class TourListModel extends ChangeNotifier {
     if (_selected != null) {
       return this._toursByKey[_selected]!.last;
     }
-    return TourModel();
-    //return newTour();
+    return newTour();
   }
 
   void selectTour(TourKey key) {
     if (_toursByKey.containsKey(key)) {
       this._selected = key;
-      notifyListeners();
+      _notify();
     }
   }
 
   void deselectTour() {
     if (_selected != null) {
       _selected = null;
-      notifyListeners();
+      _notify();
     }
   }
 
   void updateTour(TourModel newModel) {
-
     final prevModels = this._toursByKey[newModel.key];
     if (prevModels != null && prevModels.last != newModel) {
       prevModels.add(newModel);
-      notifyListeners();
+      _notify();
       return;
     }
     if (prevModels == null && !newModel.hasAllDefaultValues()) {
-      this._toursByKey[newModel.key] = [ newModel ];
-      notifyListeners();
+      this._toursByKey[newModel.key] = [newModel];
+      _notify();
     }
-
-    // this._toursByKey.update(newModel.key,
-    //         (l) {
-    //   if (l.last != newModel) {
-    //     l.add(newModel);
-    //     notifyListeners();
-    //   }
-    //   return l;
-    //   },
-    //     ifAbsent: () {
-    //   print('toursByKey 1: $_toursByKey'); return [newModel];
-    //     }
-    // );
-    // print('toursByKey 2:' + _toursByKey.values.map((e) => '${e.last.title}: ${e.length}').toList().toString());
-
   }
 
   void deleteTour(TourKey key) {
@@ -75,7 +56,7 @@ class TourListModel extends ChangeNotifier {
       unselected = true;
     }
     if (removedFromMap || unselected) {
-      notifyListeners();
+      _notify();
     }
   }
 
@@ -83,17 +64,23 @@ class TourListModel extends ChangeNotifier {
     var keysOfEmptyTours = _toursByKey.values
         .map((e) => e.last)
         .where((element) => element.hasAllDefaultValues())
-        .map((e) => e.key).toSet();
+        .map((e) => e.key)
+        .toSet();
     _toursByKey.removeWhere((key, value) => keysOfEmptyTours.contains(key));
     if (keysOfEmptyTours.contains(_selected)) {
       _selected = null;
     }
     if (keysOfEmptyTours.isNotEmpty) {
-      notifyListeners();
+      _notify();
     }
   }
 
   List<TourModel> allTours() {
     return _toursByKey.values.map((e) => e.last).toList().reversed.toList();
+  }
+
+  void _notify() {
+    print('selected: ${_selected?.id} | ${allTours().map((e) => e.key.id)}');
+    notifyListeners();
   }
 }

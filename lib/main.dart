@@ -11,7 +11,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -24,7 +23,6 @@ class MyApp extends StatelessWidget {
           initialRoute: TourOverview.routeName,
           routes: routes,
           navigatorObservers: [routeObserver],
-        )
-    );
+        ));
   }
 }

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
 class TourDetailTextInputField extends StatefulWidget {
-
   final String placeholder;
   final String initialValue;
   final Subject<String> updateSubject;
 
-  TourDetailTextInputField(this.placeholder, this.initialValue, this.updateSubject);
+  TourDetailTextInputField(
+      this.placeholder, this.initialValue, this.updateSubject);
 
   @override
   State createState() {
@@ -16,7 +16,6 @@ class TourDetailTextInputField extends StatefulWidget {
 }
 
 class _TourDetailTextInputFieldState extends State<TourDetailTextInputField> {
-
   final TextEditingController _controller;
   final _debounceChange = BehaviorSubject<String>();
 
@@ -27,18 +26,15 @@ class _TourDetailTextInputFieldState extends State<TourDetailTextInputField> {
   void initState() {
     super.initState();
 
-    _debounceChange
-        .debounceTime(Duration(milliseconds: 500))
-        .listen((event) {
-          if (!widget.updateSubject.isClosed) {
-            widget.updateSubject.add(event);
-          }
-        });
-    
+    _debounceChange.debounceTime(Duration(milliseconds: 500)).listen((event) {
+      if (!widget.updateSubject.isClosed) {
+        widget.updateSubject.add(event);
+      }
+    });
+
     _controller.addListener(() {
       _debounceChange.add(_controller.text);
     });
-    
   }
 
   @override
@@ -50,21 +46,17 @@ class _TourDetailTextInputFieldState extends State<TourDetailTextInputField> {
 
   @override
   Widget build(BuildContext context) {
-
     return Focus(
-        onFocusChange: (hasFocus){
+        onFocusChange: (hasFocus) {
           if (!hasFocus) {
-            print('in onFocusChange');
             widget.updateSubject.add(_controller.text);
           }
         },
         child: TextField(
             controller: _controller,
             decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: widget.placeholder,
-            )
-        )
-    );
+              border: OutlineInputBorder(),
+              hintText: widget.placeholder,
+            )));
   }
 }
