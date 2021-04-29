@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tour_log/routes.dart';
+import 'package:tour_log/screens/tour_overview/tour_overview.dart';
 import 'package:tour_log/theme/style.dart';
 
 import 'models/tour_list.dart';
@@ -20,8 +21,9 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           title: 'Tour Log',
           theme: appTheme(),
-          initialRoute: '/',
+          initialRoute: TourOverview.routeName,
           routes: routes,
+          navigatorObservers: [routeObserver],
         )
     );
   }

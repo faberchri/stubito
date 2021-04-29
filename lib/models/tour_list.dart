@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/foundation.dart';
 import 'package:tour_log/models/tour.dart';
 
@@ -18,7 +20,8 @@ class TourListModel extends ChangeNotifier {
     if (_selected != null) {
       return this._toursByKey[_selected]!.last;
     }
-    return newTour();
+    return TourModel();
+    //return newTour();
   }
 
   void selectTour(TourKey key) {
@@ -28,18 +31,40 @@ class TourListModel extends ChangeNotifier {
     }
   }
 
+  void deselectTour() {
+    if (_selected != null) {
+      _selected = null;
+      notifyListeners();
+    }
+  }
+
   void updateTour(TourModel newModel) {
-    this._toursByKey.update(newModel.key,
-            (l) {
-      if (l.last != newModel) {
-        l.add(newModel);
-      }
-      return l;
-      },
-        ifAbsent: () => [newModel]
-    );
-    print(_toursByKey.values.map((e) => '${e.last.title}: ${e.length}').toList());
-    notifyListeners();
+
+    final prevModels = this._toursByKey[newModel.key];
+    if (prevModels != null && prevModels.last != newModel) {
+      prevModels.add(newModel);
+      notifyListeners();
+      return;
+    }
+    if (prevModels == null && !newModel.hasAllDefaultValues()) {
+      this._toursByKey[newModel.key] = [ newModel ];
+      notifyListeners();
+    }
+
+    // this._toursByKey.update(newModel.key,
+    //         (l) {
+    //   if (l.last != newModel) {
+    //     l.add(newModel);
+    //     notifyListeners();
+    //   }
+    //   return l;
+    //   },
+    //     ifAbsent: () {
+    //   print('toursByKey 1: $_toursByKey'); return [newModel];
+    //     }
+    // );
+    // print('toursByKey 2:' + _toursByKey.values.map((e) => '${e.last.title}: ${e.length}').toList().toString());
+
   }
 
   void deleteTour(TourKey key) {
@@ -69,6 +94,6 @@ class TourListModel extends ChangeNotifier {
   }
 
   List<TourModel> allTours() {
-    return _toursByKey.values.map((e) => e.last).toList();
+    return _toursByKey.values.map((e) => e.last).toList().reversed.toList();
   }
 }

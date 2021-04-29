@@ -36,10 +36,26 @@ class _TourDetailState extends State<TourDetail> {
   final criticalSectionsSubject = BehaviorSubject<String>();
   final remarksSubject = BehaviorSubject<String>();
 
+  TourModel? model;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    model = context.read<TourListModel>().getSelectedOrNewTour();
+  }
+
+
+
   void _updateModel(BuildContext context, _TourModelUpdater updater) {
-    final l = context.read<TourListModel>();
-    final m = l.getSelectedOrNewTour();
-    l.updateTour(updater(m));
+    //final l = context.read<TourListModel>();
+    //final m = l.getSelectedOrNewTour();
+    final um = updater(model!);
+    //l.updateTour(um);
+    context.read<TourListModel>().updateTour(um);
+    setState(() {
+      model = um;
+    });
   }
 
   void _initModelUpdaters(BuildContext context) {
@@ -89,25 +105,54 @@ class _TourDetailState extends State<TourDetail> {
 
   @override
   Widget build(BuildContext context) {
-    final tourListModel = context.read<TourListModel>();
-    var initialModel = tourListModel.getSelectedOrNewTour();
+    //final tourListModel = context.read<TourListModel>();
+    //var initialModel = tourListModel.getSelectedOrNewTour();
 
     _initModelUpdaters(context);
 
-    final titleField = TourDetailTextInputField('Title', initialModel.title, titleSubject);
-    final remarksField = TourDetailTextInputField('Remarks', initialModel.remarks, remarksSubject);
+    final titleField = TourDetailTextInputField('Title', model!.title, titleSubject);
+    final remarksField = TourDetailTextInputField('Remarks', model!.remarks, remarksSubject);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Tour Details'),
-      ),
-      body: ListView(
-          children: [
-            titleField,
-            remarksField,
-          ]
-      ),
-    );
+
+
+    return WillPopScope(
+        child:
+        Scaffold(
+          appBar: AppBar(
+            title: Text('Tour Details'),
+          ),
+          body: ListView(
+              children: [
+                titleField,
+                remarksField,
+              ]
+          ),
+        ),
+        onWillPop: () {
+          //tourListModel.deselectTour();
+          //Navigator.pop(context);
+
+          context.read<TourListModel>().deselectTour();
+
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.focusedChild?.unfocus();
+          }
+          return Future.value(true);
+              //.whenComplete(() => context.read<TourListModel>().removeEmptyTours());
+        });
+
+    // return Scaffold(
+    //       appBar: AppBar(
+    //         title: Text('Tour Details'),
+    //       ),
+    //       body: ListView(
+    //           children: [
+    //             titleField,
+    //             remarksField,
+    //           ]
+    //       ),
+    //     );
   }
 
   @override

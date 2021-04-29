@@ -54,6 +54,7 @@ class _TourDetailTextInputFieldState extends State<TourDetailTextInputField> {
     return Focus(
         onFocusChange: (hasFocus){
           if (!hasFocus) {
+            print('in onFocusChange');
             widget.updateSubject.add(_controller.text);
           }
         },
