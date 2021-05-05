@@ -206,7 +206,6 @@ void main() {
       expect(textFieldsFinder, findsWidgets);
 
       // edit item
-
       await tester.enterText(textFieldsFinder.first, someText);
 
       // navigate back
