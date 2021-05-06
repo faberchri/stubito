@@ -22,7 +22,7 @@ class TourListModel extends ChangeNotifier {
   }
 
   void selectTour(TourKey key) {
-    if (_toursByKey.containsKey(key)) {
+    if (_toursByKey.containsKey(key) && this._selected != key) {
       this._selected = key;
       _notify();
     }
