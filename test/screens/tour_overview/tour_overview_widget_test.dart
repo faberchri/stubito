@@ -1,30 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
-import 'package:tour_log/models/tour.dart';
 import 'package:tour_log/models/tour_list.dart';
 import 'package:tour_log/routes.dart';
 import 'package:tour_log/screens/tour_detail/tour_detail.dart';
 import 'package:tour_log/screens/tour_overview/tour_overview.dart';
 
+import '../../util/finders.dart';
+import '../../util/helpers.dart';
+import '../../util/test_app.dart';
 import '../../util/test_observer.dart';
 
 Widget createTourOverviewScreen({
   List<NavigatorObserver> navObservers = const [],
   TourListModel? tourListModel,
 }) =>
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-            create: (context) => tourListModel ?? TourListModel()),
-      ],
-      child: MaterialApp(
-        navigatorObservers: navObservers,
-        routes: routes,
-        initialRoute: TourOverview.routeName,
-      ),
-    );
+    createTestApp(TourOverview.routeName,
+        navObservers: navObservers, tourListModel: tourListModel);
 
 void main() {
   group('TourOverview widget tests', () {
@@ -67,8 +59,7 @@ void main() {
       };
 
       await tester.tap(addButtonFinder());
-      await tester.pump();
-      await tester.pump(Duration(milliseconds: 50));
+      await pumpForNavigation(tester);
 
       expect(navigationPushed, isTrue);
       expect(find.byType(TourDetail), findsOneWidget);
@@ -102,7 +93,7 @@ void main() {
         // validate navigation took place and all items are on overview screen
         expect(navigationPushed, isTrue);
         testStrings
-            .map((ts) => find.widgetWithText(ListTile, ts))
+            .map((ts) => listTileFinder(ts))
             .forEach((finder) => expect(finder, findsOneWidget));
 
         // prepare for navigation to detail screen
@@ -116,13 +107,11 @@ void main() {
         final testString = testStrings[testStringIndex];
 
         // navigate to detail
-        await tester.tap(find.widgetWithText(ListTile, testString));
-        await tester.pump();
-        await tester.pump(Duration(milliseconds: 50));
+        await tester.tap(listTileFinder(testString));
+        await pumpForNavigation(tester);
 
         // validate detail screen
-        final backButtonFinder = find.byType(BackButton);
-        expect(backButtonFinder, findsOneWidget);
+        expect(backButtonFinder(), findsOneWidget);
         expect(navigationPushed, isTrue);
         expect(find.byType(TourDetail), findsOneWidget);
         expect(find.widgetWithText(TextField, testString), findsOneWidget);
@@ -134,7 +123,7 @@ void main() {
           isPageRoute(TourOverview.routeName, route);
           navigationPushed = true;
         };
-        await tester.tap(backButtonFinder);
+        await tester.tap(backButtonFinder());
         await tester.pumpAndSettle(); // make sure everything is settled
       }
     });
@@ -142,7 +131,7 @@ void main() {
     testWidgets('Tap on add button creates entry', (WidgetTester tester) async {
       await tester.pumpWidget(createTourOverviewScreen());
 
-      final newTourEntryFinder = find.widgetWithText(ListTile, 'Neue Tour');
+      final newTourEntryFinder = listTileFinder('Neue Tour');
       expect(newTourEntryFinder, findsNothing);
 
       await tester.tap(addButtonFinder());
@@ -154,7 +143,7 @@ void main() {
     testWidgets('Empty item is removed', (WidgetTester tester) async {
       await tester
           .pumpWidget(createTourOverviewScreen(navObservers: [routeObserver]));
-      final newTourEntryFinder = find.widgetWithText(ListTile, 'Neue Tour');
+      final newTourEntryFinder = listTileFinder('Neue Tour');
 
       // check no items present
       expect(newTourEntryFinder, findsNothing);
@@ -168,12 +157,11 @@ void main() {
       await tester.pump(Duration(milliseconds: 50));
 
       // check we're on detail page
-      final backButtonFinder = find.byType(BackButton);
-      expect(backButtonFinder, findsOneWidget);
+      expect(backButtonFinder(), findsOneWidget);
       expect(find.byType(TourDetail), findsOneWidget);
 
       // navigate back
-      await tester.tap(backButtonFinder);
+      await tester.tap(backButtonFinder());
       await tester.pump();
 
       // empty item is still present after return from detail
@@ -189,27 +177,25 @@ void main() {
           .pumpWidget(createTourOverviewScreen(navObservers: [routeObserver]));
 
       final someText = 'abcd';
-      final newEntryFinder = find.widgetWithText(ListTile, someText);
+      final newEntryFinder = listTileFinder(someText);
 
       // check no items present
       expect(newEntryFinder, findsNothing);
 
       // add item and navigate to detail
       await tester.tap(addButtonFinder());
-      await tester.pump();
-      await tester.pump(Duration(milliseconds: 50));
+      await pumpForNavigation(tester);
 
       // check we're on detail page
       final textFieldsFinder = find.byType(TextField);
-      final backButtonFinder = find.byType(BackButton);
-      expect(backButtonFinder, findsOneWidget);
+      expect(backButtonFinder(), findsOneWidget);
       expect(textFieldsFinder, findsWidgets);
 
       // edit item
       await tester.enterText(textFieldsFinder.first, someText);
 
       // navigate back
-      await tester.tap(backButtonFinder);
+      await tester.tap(backButtonFinder());
       await tester.pumpAndSettle(); // make sure everything is settled
 
       // check item is in list
@@ -233,11 +219,11 @@ void main() {
       for (final testStringIndex in deletionOrder) {
         testStrings
             .where((ts) => !deleted.contains(ts))
-            .map((ts) => find.widgetWithText(ListTile, ts))
+            .map((ts) => listTileFinder(ts))
             .forEach((finder) => expect(finder, findsOneWidget));
 
         final testString = testStrings[testStringIndex];
-        final toDeleteItemFinder = find.widgetWithText(ListTile, testString);
+        final toDeleteItemFinder = listTileFinder(testString);
         final toDeleteButtonFinder =
             find.widgetWithIcon(IconSlideAction, Icons.delete);
 
@@ -267,14 +253,4 @@ void main() {
       expect(find.byType(ListTile), findsNothing);
     });
   });
-}
-
-Finder addButtonFinder() {
-  return find.byIcon(Icons.add);
-}
-
-TourListModel createTourListModelWithEntries(List<String> entries) {
-  final tourListModel = TourListModel();
-  entries.forEach((ts) => tourListModel.updateTour(TourModel(title: ts)));
-  return tourListModel;
 }

@@ -3,7 +3,8 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tour_log/main.dart';
 
-import 'screens/tour_overview/tour_overview_widget_test.dart';
+import 'util/finders.dart';
+import 'util/helpers.dart';
 
 void main() {
   group('Smoke tests', () {
@@ -20,11 +21,11 @@ void main() {
       await tester.enterText(find.byType(TextField).first, someTextOne);
 
       // navigate back to overview
-      await tester.tap(find.byType(BackButton));
+      await tester.tap(backButtonFinder());
       await pumpForNavigation(tester);
 
       // check if item is present in overview
-      expect(find.widgetWithText(ListTile, someTextOne), findsOneWidget);
+      expect(listTileFinder(someTextOne), findsOneWidget);
 
       // add second item
       await tester.tap(addButtonFinder());
@@ -35,15 +36,15 @@ void main() {
       await tester.enterText(find.byType(TextField).first, someTextTwoOrig);
 
       // navigate back to overview
-      await tester.tap(find.byType(BackButton));
+      await tester.tap(backButtonFinder());
       await pumpForNavigation(tester, millisecs: 100);
 
       // check that first and second item are present in overview
-      expect(find.widgetWithText(ListTile, someTextOne), findsOneWidget);
-      expect(find.widgetWithText(ListTile, someTextTwoOrig), findsOneWidget);
+      expect(listTileFinder(someTextOne), findsOneWidget);
+      expect(listTileFinder(someTextTwoOrig), findsOneWidget);
 
       // navigate to second item
-      await tester.tap(find.widgetWithText(ListTile, someTextTwoOrig));
+      await tester.tap(listTileFinder(someTextTwoOrig));
       await pumpForNavigation(tester);
 
       // edit second item
@@ -52,31 +53,23 @@ void main() {
       await tester.enterText(find.byType(TextField).first, someTextTwoEdited);
 
       // navigate back to overview
-      await tester.tap(find.byType(BackButton));
+      await tester.tap(backButtonFinder());
       await pumpForNavigation(tester);
 
       // check that first and edited second item are present in overview
-      expect(find.widgetWithText(ListTile, someTextOne), findsOneWidget);
-      expect(find.widgetWithText(ListTile, someTextTwoEdited), findsOneWidget);
+      expect(listTileFinder(someTextOne), findsOneWidget);
+      expect(listTileFinder(someTextTwoEdited), findsOneWidget);
 
       // delete first item
-      await tester.drag(
-          find.widgetWithText(ListTile, someTextOne), Offset(-500.0, 0.0));
+      await tester.drag(listTileFinder(someTextOne), Offset(-500.0, 0.0));
       await tester.pump(Duration(milliseconds: 500));
       await tester.tap(find.widgetWithIcon(IconSlideAction, Icons.delete));
       await tester.pump();
       await tester.pump(Duration(milliseconds: 700));
 
       // check that first item is missing and edited second item is present in overview
-      expect(find.widgetWithText(ListTile, someTextOne), findsNothing);
-      expect(find.widgetWithText(ListTile, someTextTwoEdited), findsOneWidget);
+      expect(listTileFinder(someTextOne), findsNothing);
+      expect(listTileFinder(someTextTwoEdited), findsOneWidget);
     });
   });
-}
-
-Future<void> pumpForNavigation(WidgetTester tester,
-    {int millisecs = 50}) async {
-  return tester
-      .pump()
-      .then((value) => tester.pump(Duration(milliseconds: millisecs)));
 }
