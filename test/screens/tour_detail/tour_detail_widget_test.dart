@@ -33,9 +33,10 @@ void main() {
       expect(find.widgetWithText(TextField, 'Title'), findsOneWidget);
     });
 
-    testWidgets('Has an input field for remarks', (WidgetTester tester) async {
+    testWidgets('Has an input field for due date', (WidgetTester tester) async {
       await tester.pumpWidget(createTourDetailScreen());
-      expect(find.widgetWithText(TextField, 'Remarks'), findsOneWidget);
+      expect(find.text('Bis wann?'), findsOneWidget);
+      expect(find.widgetWithIcon(ElevatedButton, Icons.calendar_today), findsOneWidget);
     });
 
   });

@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:tour_log/models/field_spec.dart';
 
 class TourDetailTextInputField extends StatefulWidget {
-  final String placeholder;
-  final String initialValue;
-  final Subject<String> updateSubject;
+  final Subject<FieldModel> updateSubject;
+  final TextFieldModel textFieldModel;
 
-  TourDetailTextInputField(
-      this.placeholder, this.initialValue, this.updateSubject);
+  TourDetailTextInputField(this.textFieldModel, this.updateSubject);
 
   @override
   State createState() {
-    return _TourDetailTextInputFieldState(initialValue);
+    return _TourDetailTextInputFieldState(this.textFieldModel.value);
   }
 }
 
@@ -28,7 +27,7 @@ class _TourDetailTextInputFieldState extends State<TourDetailTextInputField> {
 
     _debounceChange.debounceTime(Duration(milliseconds: 500)).listen((event) {
       if (!widget.updateSubject.isClosed) {
-        widget.updateSubject.add(event);
+        widget.updateSubject.add(widget.textFieldModel.copy(event));
       }
     });
 
@@ -49,14 +48,14 @@ class _TourDetailTextInputFieldState extends State<TourDetailTextInputField> {
     return Focus(
         onFocusChange: (hasFocus) {
           if (!hasFocus) {
-            widget.updateSubject.add(_controller.text);
+            widget.updateSubject.add(widget.textFieldModel.copy(_controller.text));
           }
         },
         child: TextField(
             controller: _controller,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
-              hintText: widget.placeholder,
+              hintText: widget.textFieldModel.spec.placeholderText,
             )));
   }
 }

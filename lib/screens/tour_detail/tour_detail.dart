@@ -1,6 +1,10 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:tour_log/models/field_spec.dart';
+import 'package:tour_log/models/item_spec.dart';
 import 'package:tour_log/models/tour.dart';
 import 'package:tour_log/models/tour_list.dart';
 
@@ -16,6 +20,7 @@ class TourDetail extends StatefulWidget {
 }
 
 typedef TourModel _TourModelUpdater(TourModel m);
+typedef ItemModel _ItemModelUpdater(ItemModel m);
 
 class _TourDetailState extends State<TourDetail> {
   final titleSubject = BehaviorSubject<String>();
@@ -33,12 +38,23 @@ class _TourDetailState extends State<TourDetail> {
   final criticalSectionsSubject = BehaviorSubject<String>();
   final remarksSubject = BehaviorSubject<String>();
 
+  //UnmodifiableListView<BehaviorSubject<FieldModel>> fieldModels = UnmodifiableListView([]);
+
+  final fieldModelChanges = BehaviorSubject<FieldModel>();
+
   TourModel? model;
+  ItemModel? itemModel;
 
   @override
   void initState() {
     super.initState();
     model = context.read<TourListModel>().getSelectedOrNewTour();
+    
+    
+    this.itemModel = context.read<ItemListModel>().getSelectedOrNewTour();
+    //fieldModels = UnmodifiableListView(itemModel.fields.map((e) => BehaviorSubject<FieldModel>()).toList());
+    
+    //this.itemModel = itemModel;
   }
 
   void _updateModel(BuildContext context, _TourModelUpdater updater) {
@@ -49,7 +65,42 @@ class _TourDetailState extends State<TourDetail> {
     });
   }
 
+  // void _updateModel2(BuildContext context, _ItemModelUpdater updater) {
+  //   final um = updater(itemModel!);
+  //   context.read<ItemListModel>().updateTour(um);
+  //   setState(() {
+  //     itemModel = um;
+  //   });
+  // }
+
   void _initModelUpdaters(BuildContext context) {
+
+    // fieldModels.forEach((subject) {
+    //   subject.listen((value) {
+    //     final localItemModel = itemModel;
+    //     if (localItemModel != null) {
+    //       final newItemModel = localItemModel.copy(value);
+    //       context.read<ItemListModel>().updateItem(newItemModel);
+    //       setState(() {
+    //         itemModel = newItemModel;
+    //       });
+    //     }
+    //   });
+    // });
+
+
+      fieldModelChanges.listen((value) {
+        final localItemModel = itemModel;
+        if (localItemModel != null) {
+          final newItemModel = localItemModel.copy(value);
+          context.read<ItemListModel>().updateItem(newItemModel);
+          setState(() {
+            itemModel = newItemModel;
+          });
+        }
+      });
+
+    
     titleSubject.listen((value) {
       _updateModel(context, (m) => m.copy(title: value));
     });
@@ -98,20 +149,20 @@ class _TourDetailState extends State<TourDetail> {
   Widget build(BuildContext context) {
     _initModelUpdaters(context);
 
-    final titleField =
-        TourDetailTextInputField('Title', model!.title, titleSubject);
-    final remarksField =
-        TourDetailTextInputField('Remarks', model!.remarks, remarksSubject);
+    // final titleField =
+    //     TourDetailTextInputField('Title', model!.title, titleSubject);
+    // final remarksField =
+    //     TourDetailTextInputField('Remarks', model!.remarks, remarksSubject);
+
+    final widgetResolverVisitor = WidgetResolverVisitor(fieldModelChanges);
+    final fieldWidgets = itemModel!.fields.map((e) => e.accept(widgetResolverVisitor)).toList();
 
     return WillPopScope(
         child: Scaffold(
           appBar: AppBar(
             title: Text('Tour Details'),
           ),
-          body: ListView(children: [
-            titleField,
-            remarksField,
-          ]),
+          body: ListView(children: fieldWidgets),
         ),
         onWillPop: () {
           // Required for proper animation on quick addition of new item.
@@ -138,5 +189,17 @@ class _TourDetailState extends State<TourDetail> {
     criticalSectionsSubject.close();
     remarksSubject.close();
     super.dispose();
+  }
+}
+
+class WidgetResolverVisitor extends FieldModelVisitor<Widget> {
+
+  final BehaviorSubject<FieldModel> subject;
+
+  WidgetResolverVisitor(this.subject);
+
+  @override
+  Widget visitTextFieldModel(TextFieldModel model) {
+    return TourDetailTextInputField(model, subject);
   }
 }
