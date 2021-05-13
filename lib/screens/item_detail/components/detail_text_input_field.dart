@@ -2,23 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:tour_log/models/field_spec.dart';
 
-class TourDetailTextInputField extends StatefulWidget {
+class ItemDetailTextInputField extends StatefulWidget {
   final Subject<FieldModel> updateSubject;
   final TextFieldModel textFieldModel;
 
-  TourDetailTextInputField(this.textFieldModel, this.updateSubject);
+  ItemDetailTextInputField(this.textFieldModel, this.updateSubject);
 
   @override
   State createState() {
-    return _TourDetailTextInputFieldState(this.textFieldModel.value);
+    return _ItemDetailTextInputFieldState(this.textFieldModel.value);
   }
 }
 
-class _TourDetailTextInputFieldState extends State<TourDetailTextInputField> {
+class _ItemDetailTextInputFieldState extends State<ItemDetailTextInputField> {
   final TextEditingController _controller;
   final _debounceChange = BehaviorSubject<String>();
 
-  _TourDetailTextInputFieldState(String initialValue)
+  _ItemDetailTextInputFieldState(String initialValue)
       : _controller = TextEditingController(text: initialValue);
 
   @override

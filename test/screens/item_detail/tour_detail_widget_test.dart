@@ -1,23 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tour_log/models/tour_list.dart';
-import 'package:tour_log/screens/tour_detail/tour_detail.dart';
-import 'package:tour_log/screens/tour_overview/components/tour_list.dart';
+import 'package:tour_log/models/item_list.dart';
+import 'package:tour_log/models/item_spec.dart';
+import 'package:tour_log/screens/item_detail/item_detail.dart';
 
 import '../../util/helpers.dart';
 import '../../util/test_app.dart';
 
 Widget createTourDetailScreen({
   List<NavigatorObserver> navObservers = const [],
-  TourListModel? tourListModel,
+  ItemListModel? tourListModel,
 }) {
   if (tourListModel == null) {
-    tourListModel = TourListModel();
-    tourListModel.newTour();
+    tourListModel = ItemListModel(todoItemSpec);
+    tourListModel.newItem();
   }
-  return createTestApp(TourDetail.routeName,
-        navObservers: navObservers, tourListModel: tourListModel);
+  return createTestApp(ItemDetail.routeName,
+        navObservers: navObservers, itemListModel: tourListModel);
 }
 
 

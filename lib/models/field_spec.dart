@@ -1,10 +1,10 @@
 import 'dart:collection';
 
+import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:tour_log/screens/tour_detail/components/detail_text_input_field.dart';
 
 typedef T InitialValueProvider<T>();
 
@@ -21,11 +21,6 @@ abstract class FieldSpec<T> {
   final InitialValueProvider<T> initialValueProvider;
 
   FieldSpec(this.label, this.showLabelInGui, this.initialValueProvider);
-
-  FieldModel<T> newModel() {
-    return FieldModel(this, initialValueProvider());
-  }
-
   R accept<R>(FieldSpecVisitor<R> visitor);
 
 }
@@ -70,78 +65,42 @@ class DateFieldSpec extends FieldSpec<DateTime> {
   }
 }
 
-class ToWidgetVisitor extends FieldSpecVisitor<Widget> {
-
-  final FieldModel fieldModel;
-
-  @override
-  Widget visit(TextFieldSpec spec) {
-    return TourDetailTextInputField(spec.placeholderText, fieldModel.value, updateSubject)
-  }
-}
-
-// class FieldModel<T> {
-//   final FieldSpec<T> spec;
-//   final T value;
-//
-//   FieldModel(this.spec, this.value);
-//
-//   FieldModel copy(T newValue) {
-//     return FieldModel(spec, newValue);
-//   }
-//
-//   bool hasDefaultValue() {
-//     return spec.initialValueProvider() == value;
-//   }
-//
-//   Widget toWidget() {
-//     return spec.accept(ToWidgetVisitor());
-//   }
-//
-//   //FieldModel(S spec, V value) : this.spec = spec, this.value = value;
-// }
-
 abstract class FieldModelVisitor<R> {
   R visitTextFieldModel(TextFieldModel model);
+
+  R visitSelectionFieldModel(SelectionFieldModel model);
+  R visitDateFieldModel(DateFieldModel model);
 }
 
 abstract class FieldModel<T> {
 
-  FieldModel<T> copy(T newValue);
-  //bool hasDefaultValue();
-  //Widget toWidget(BehaviorSubject<T> subject);
+   abstract final FieldSpec<T> spec;
+   abstract final T value;
 
-   final FieldSpec<T> spec;
-   final T value;
-
-  R accept<R>(FieldModelVisitor<R> visitor);
-
+   FieldModel<T> copy(T newValue);
+   R accept<R>(FieldModelVisitor<R> visitor);
 }
 
-class TextFieldModel extends FieldModel<String> {
+class TextFieldModel with EquatableMixin implements FieldModel<String>  {
   final TextFieldSpec spec;
   final String value;
 
-  TextFieldModel(this.spec, this.value);
+  TextFieldModel._(this.spec, this.value);
+
+  TextFieldModel(TextFieldSpec spec)
+      : this.spec = spec,
+        this.value = spec.initialValueProvider();
 
   @override
-  FieldModel<String> copy(String newValue) {
-    return TextFieldModel(spec, newValue);
+  List<Object> get props => [
+    spec,
+    value
+  ];
+
+  @override
+  TextFieldModel copy(String newValue) {
+    return TextFieldModel._(spec, newValue);
   }
-
-
-
-  // FieldModel copy(String newValue) {
-  //   return FieldModel(spec, newValue);
-  // }
-  //
-  // bool hasDefaultValue() {
-  //   return spec.initialValueProvider() == value;
-  // }
-  //
-  // Widget toWidget() {
-  //   return spec.accept(ToWidgetVisitor());
-  // }
 
   @override
   R accept<R>(FieldModelVisitor<R> visitor) {
@@ -150,12 +109,56 @@ class TextFieldModel extends FieldModel<String> {
 }
 
 
+class SelectionFieldModel with EquatableMixin implements FieldModel<String>  {
+  final SelectionFieldSpec spec;
+  final String value;
 
-//
-// class SelectionFieldModel {
-//   final SelectionFieldSpec spec;
-//   final String value;
-//
-//   SelectionFieldModel(this.spec, this.value);
-// }
+  SelectionFieldModel._(this.spec, this.value);
 
+  SelectionFieldModel(SelectionFieldSpec spec)
+      : this.spec = spec,
+        this.value = spec.initialValueProvider();
+
+  @override
+  List<Object> get props => [
+    spec,
+    value
+  ];
+
+  @override
+  SelectionFieldModel copy(String newValue) {
+    return SelectionFieldModel._(this.spec, newValue);
+  }
+
+  @override
+  R accept<R>(FieldModelVisitor<R> visitor) {
+    return visitor.visitSelectionFieldModel(this);
+  }
+}
+
+class DateFieldModel with EquatableMixin implements FieldModel<DateTime> {
+  final DateFieldSpec spec;
+  final DateTime value;
+
+  DateFieldModel._(this.spec, this.value);
+
+  DateFieldModel(DateFieldSpec spec)
+      : this.spec = spec,
+        this.value = spec.initialValueProvider();
+
+  @override
+  List<Object> get props => [
+    spec,
+    value
+  ];
+
+  @override
+  DateFieldModel copy(DateTime newValue) {
+    return DateFieldModel._(this.spec, newValue);
+  }
+
+  @override
+  R accept<R>(FieldModelVisitor<R> visitor) {
+    return visitor.visitDateFieldModel(this);
+  }
+}

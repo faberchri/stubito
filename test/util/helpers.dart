@@ -1,6 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tour_log/models/item.dart';
+import 'package:tour_log/models/item_spec.dart';
 import 'package:tour_log/models/tour.dart';
-import 'package:tour_log/models/tour_list.dart';
+import 'package:tour_log/models/item_list.dart';
+
+final todoItemSpec = TodoItemSpec();
 
 Future<void> pumpForNavigation(WidgetTester tester,
     {int millisecs = 50}) async {
@@ -9,8 +13,14 @@ Future<void> pumpForNavigation(WidgetTester tester,
       .then((value) => tester.pump(Duration(milliseconds: millisecs)));
 }
 
-TourListModel createTourListModelWithEntries(List<String> entries) {
-  final tourListModel = TourListModel();
-  entries.forEach((ts) => tourListModel.updateTour(TourModel(title: ts)));
+ItemListModel createTourListModelWithEntries(List<String> entries) {
+  final tourListModel = ItemListModel(todoItemSpec);
+
+  entries.forEach((ts) {
+    var m = ItemModel(todoItemSpec);
+    final newTitle = m.fields.firstWhere((element) => element.spec.label == 'Titel').copy(ts);
+    m = m.copy(newTitle);
+    tourListModel.updateItem(m);
+  });
   return tourListModel;
 }

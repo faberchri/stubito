@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tour_log/models/tour_list.dart';
+import 'package:tour_log/models/item_list.dart';
 import 'package:tour_log/routes.dart';
-import 'package:tour_log/screens/tour_detail/tour_detail.dart';
-import 'package:tour_log/screens/tour_overview/tour_overview.dart';
+import 'package:tour_log/screens/item_detail/item_detail.dart';
+import 'package:tour_log/screens/item_overview/item_overview.dart';
+
 
 import '../../util/finders.dart';
 import '../../util/helpers.dart';
@@ -13,10 +14,10 @@ import '../../util/test_observer.dart';
 
 Widget createTourOverviewScreen({
   List<NavigatorObserver> navObservers = const [],
-  TourListModel? tourListModel,
+  ItemListModel? tourListModel,
 }) =>
-    createTestApp(TourOverview.routeName,
-        navObservers: navObservers, tourListModel: tourListModel);
+    createTestApp(ItemOverview.routeName,
+        navObservers: navObservers, itemListModel: tourListModel);
 
 void main() {
   group('TourOverview widget tests', () {
@@ -40,7 +41,7 @@ void main() {
         ..onPushed = (Route<dynamic>? route, Route<dynamic>? previousRoute) {
           // Pushes the initial route.
           isNullRoute(previousRoute);
-          isPageRoute(TourOverview.routeName, route);
+          isPageRoute(ItemOverview.routeName, route);
           navigationPushed = true;
         };
 
@@ -53,8 +54,8 @@ void main() {
 
       testObserver.onPushed =
           (Route<dynamic>? route, Route<dynamic>? previousRoute) {
-        isPageRoute(TourOverview.routeName, previousRoute);
-        isPageRoute(TourDetail.routeName, route);
+        isPageRoute(ItemOverview.routeName, previousRoute);
+        isPageRoute(ItemDetail.routeName, route);
         navigationPushed = true;
       };
 
@@ -62,7 +63,7 @@ void main() {
       await pumpForNavigation(tester);
 
       expect(navigationPushed, isTrue);
-      expect(find.byType(TourDetail), findsOneWidget);
+      expect(find.byType(ItemDetail), findsOneWidget);
     });
 
     testWidgets('Tap on item triggers navigation to detail',
@@ -72,7 +73,7 @@ void main() {
         ..onPushed = (Route<dynamic>? route, Route<dynamic>? previousRoute) {
           // Pushes the initial route.
           isNullRoute(previousRoute);
-          isPageRoute(TourOverview.routeName, route);
+          isPageRoute(ItemOverview.routeName, route);
           navigationPushed = true;
         };
 
@@ -100,8 +101,8 @@ void main() {
         navigationPushed = false;
         testObserver.onPushed =
             (Route<dynamic>? route, Route<dynamic>? previousRoute) {
-          isPageRoute(TourOverview.routeName, previousRoute);
-          isPageRoute(TourDetail.routeName, route);
+          isPageRoute(ItemOverview.routeName, previousRoute);
+          isPageRoute(ItemDetail.routeName, route);
           navigationPushed = true;
         };
         final testString = testStrings[testStringIndex];
@@ -113,14 +114,14 @@ void main() {
         // validate detail screen
         expect(backButtonFinder(), findsOneWidget);
         expect(navigationPushed, isTrue);
-        expect(find.byType(TourDetail), findsOneWidget);
+        expect(find.byType(ItemDetail), findsOneWidget);
         expect(find.widgetWithText(TextField, testString), findsOneWidget);
 
         // navigate back to overview
         testObserver.onPushed =
             (Route<dynamic>? route, Route<dynamic>? previousRoute) {
-          isPageRoute(TourDetail.routeName, previousRoute);
-          isPageRoute(TourOverview.routeName, route);
+          isPageRoute(ItemDetail.routeName, previousRoute);
+          isPageRoute(ItemOverview.routeName, route);
           navigationPushed = true;
         };
         await tester.tap(backButtonFinder());
@@ -131,7 +132,7 @@ void main() {
     testWidgets('Tap on add button creates entry', (WidgetTester tester) async {
       await tester.pumpWidget(createTourOverviewScreen());
 
-      final newTourEntryFinder = listTileFinder('Neue Tour');
+      final newTourEntryFinder = listTileFinder('Neues Todo');
       expect(newTourEntryFinder, findsNothing);
 
       await tester.tap(addButtonFinder());
@@ -143,7 +144,7 @@ void main() {
     testWidgets('Empty item is removed', (WidgetTester tester) async {
       await tester
           .pumpWidget(createTourOverviewScreen(navObservers: [routeObserver]));
-      final newTourEntryFinder = listTileFinder('Neue Tour');
+      final newTourEntryFinder = listTileFinder('Neues Todo');
 
       // check no items present
       expect(newTourEntryFinder, findsNothing);
@@ -158,7 +159,7 @@ void main() {
 
       // check we're on detail page
       expect(backButtonFinder(), findsOneWidget);
-      expect(find.byType(TourDetail), findsOneWidget);
+      expect(find.byType(ItemDetail), findsOneWidget);
 
       // navigate back
       await tester.tap(backButtonFinder());

@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tour_log/models/tour_list.dart';
-import 'package:tour_log/screens/tour_overview/components/tour_list.dart';
+import 'package:tour_log/models/item_list.dart';
 
 import '../../routes.dart';
+import 'components/item_list.dart';
 
-class TourOverview extends StatefulWidget {
+class ItemOverview extends StatefulWidget {
   static const routeName = '/';
 
   @override
   State createState() {
-    return _TourOverviewState();
+    return _ItemOverviewState();
   }
 }
 
-class _TourOverviewState extends State<TourOverview> with RouteAware {
+class _ItemOverviewState extends State<ItemOverview> with RouteAware {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,11 +22,11 @@ class _TourOverviewState extends State<TourOverview> with RouteAware {
         title: Text('Deine Touren'),
       ),
       body: Center(
-        child: TourList(),
+        child: ItemList(),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.read<TourListModel>().newTour();
+          context.read<ItemListModel>().newItem();
           navigateToDetail(context);
         },
         tooltip: 'Increment',
@@ -49,8 +49,8 @@ class _TourOverviewState extends State<TourOverview> with RouteAware {
 
   @override
   void didPopNext() {
-    final tourList = context.read<TourListModel>();
-    tourList.removeEmptyTours();
-    tourList.deselectTour();
+    final itemList = context.read<ItemListModel>();
+    itemList.removeEmptyItems();
+    itemList.deselectItem();
   }
 }
