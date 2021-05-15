@@ -5,21 +5,21 @@ import 'package:tour_log/models/item_list.dart';
 import '../util/helpers.dart';
 
 void main() {
-  group('TourListModel unit tests', () {
+  group('ItemListModel unit tests', () {
     test('New list is empty', () {
       final l = ItemListModelWithNotificationCount();
       expect(l.allItems(), isEmpty);
       expect(l.notificationCount, 0);
     });
 
-    test('Model contains one after newTour() call', () {
+    test('Model contains one after newItem() call', () {
       final l = ItemListModelWithNotificationCount();
       final m = l.newItem();
       expect(l.allItems(), containsAllInOrder(<ItemModel>[m]));
       expect(l.notificationCount, 1);
     });
 
-    test('Model is selected after newTour() call', () {
+    test('Model is selected after newItem() call', () {
       final l = ItemListModelWithNotificationCount();
       final m = l.newItem();
       expect(l.getSelectedOrNewItem(), m);

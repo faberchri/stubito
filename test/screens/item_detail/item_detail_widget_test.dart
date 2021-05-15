@@ -7,32 +7,32 @@ import 'package:tour_log/screens/item_detail/item_detail.dart';
 import '../../util/helpers.dart';
 import '../../util/test_app.dart';
 
-Widget createTourDetailScreen({
+Widget createItemDetailScreen({
   List<NavigatorObserver> navObservers = const [],
-  ItemListModel? tourListModel,
+  ItemListModel? itemListModel,
 }) {
-  if (tourListModel == null) {
-    tourListModel = ItemListModel(todoItemSpec);
-    tourListModel.newItem();
+  if (itemListModel == null) {
+    itemListModel = ItemListModel(todoItemSpec);
+    itemListModel.newItem();
   }
   return createTestApp(ItemDetail.routeName,
-      navObservers: navObservers, itemListModel: tourListModel);
+      navObservers: navObservers, itemListModel: itemListModel);
 }
 
 void main() {
-  group('TourDetail widget tests', () {
+  group('ItemDetail widget tests', () {
     testWidgets('Has correct title', (WidgetTester tester) async {
-      await tester.pumpWidget(createTourDetailScreen());
+      await tester.pumpWidget(createItemDetailScreen());
       expect(find.widgetWithText(AppBar, 'Tour Details'), findsOneWidget);
     });
 
     testWidgets('Has an input field for title', (WidgetTester tester) async {
-      await tester.pumpWidget(createTourDetailScreen());
+      await tester.pumpWidget(createItemDetailScreen());
       expect(find.widgetWithText(TextField, 'Title'), findsOneWidget);
     });
 
     testWidgets('Has an input field for due date', (WidgetTester tester) async {
-      await tester.pumpWidget(createTourDetailScreen());
+      await tester.pumpWidget(createItemDetailScreen());
       expect(find.text('Bis wann?'), findsOneWidget);
       expect(find.widgetWithIcon(ElevatedButton, Icons.calendar_today),
           findsOneWidget);

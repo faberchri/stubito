@@ -12,8 +12,8 @@ Future<void> pumpForNavigation(WidgetTester tester,
       .then((value) => tester.pump(Duration(milliseconds: millisecs)));
 }
 
-ItemListModel createTourListModelWithEntries(List<String> entries) {
-  final tourListModel = ItemListModel(todoItemSpec);
+ItemListModel createItemListModelWithEntries(List<String> entries) {
+  final itemListModel = ItemListModel(todoItemSpec);
 
   entries.forEach((ts) {
     var m = ItemModel(todoItemSpec);
@@ -21,7 +21,7 @@ ItemListModel createTourListModelWithEntries(List<String> entries) {
         .firstWhere((element) => element.spec.label == 'Titel')
         .copy(ts);
     m = m.copy(newTitle);
-    tourListModel.updateItem(m);
+    itemListModel.updateItem(m);
   });
-  return tourListModel;
+  return itemListModel;
 }

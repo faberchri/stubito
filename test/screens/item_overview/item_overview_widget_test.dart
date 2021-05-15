@@ -11,23 +11,23 @@ import '../../util/helpers.dart';
 import '../../util/test_app.dart';
 import '../../util/test_observer.dart';
 
-Widget createTourOverviewScreen({
+Widget createItemOverviewScreen({
   List<NavigatorObserver> navObservers = const [],
-  ItemListModel? tourListModel,
+  ItemListModel? itemListModel,
 }) =>
     createTestApp(ItemOverview.routeName,
-        navObservers: navObservers, itemListModel: tourListModel);
+        navObservers: navObservers, itemListModel: itemListModel);
 
 void main() {
-  group('TourOverview widget tests', () {
+  group('ItemOverview widget tests', () {
     testWidgets('Has add button', (WidgetTester tester) async {
-      await tester.pumpWidget(createTourOverviewScreen());
+      await tester.pumpWidget(createItemOverviewScreen());
 
       expect(addButtonFinder(), findsOneWidget);
     });
 
     testWidgets('Has title in header', (WidgetTester tester) async {
-      await tester.pumpWidget(createTourOverviewScreen());
+      await tester.pumpWidget(createItemOverviewScreen());
       final appBarTitleFinder = find.widgetWithText(AppBar, 'Deine Touren');
 
       expect(appBarTitleFinder, findsOneWidget);
@@ -45,7 +45,7 @@ void main() {
         };
 
       await tester
-          .pumpWidget(createTourOverviewScreen(navObservers: [testObserver]));
+          .pumpWidget(createItemOverviewScreen(navObservers: [testObserver]));
       await tester.pump();
 
       expect(navigationPushed, isTrue);
@@ -81,11 +81,11 @@ void main() {
         'my test item 2',
         'my test item 3'
       ];
-      final tourListModel = createTourListModelWithEntries(testStrings);
+      final itemListModel = createItemListModelWithEntries(testStrings);
 
-      await tester.pumpWidget(createTourOverviewScreen(
+      await tester.pumpWidget(createItemOverviewScreen(
         navObservers: [testObserver],
-        tourListModel: tourListModel,
+        itemListModel: itemListModel,
       ));
       await tester.pumpAndSettle();
 
@@ -129,29 +129,29 @@ void main() {
     });
 
     testWidgets('Tap on add button creates entry', (WidgetTester tester) async {
-      await tester.pumpWidget(createTourOverviewScreen());
+      await tester.pumpWidget(createItemOverviewScreen());
 
-      final newTourEntryFinder = listTileFinder('Neues Todo');
-      expect(newTourEntryFinder, findsNothing);
+      final newItemEntryFinder = listTileFinder('Neues Todo');
+      expect(newItemEntryFinder, findsNothing);
 
       await tester.tap(addButtonFinder());
       await tester.pump();
 
-      expect(newTourEntryFinder, findsOneWidget);
+      expect(newItemEntryFinder, findsOneWidget);
     });
 
     testWidgets('Empty item is removed', (WidgetTester tester) async {
       await tester
-          .pumpWidget(createTourOverviewScreen(navObservers: [routeObserver]));
-      final newTourEntryFinder = listTileFinder('Neues Todo');
+          .pumpWidget(createItemOverviewScreen(navObservers: [routeObserver]));
+      final newItemEntryFinder = listTileFinder('Neues Todo');
 
       // check no items present
-      expect(newTourEntryFinder, findsNothing);
+      expect(newItemEntryFinder, findsNothing);
 
       // add item
       await tester.tap(addButtonFinder());
       await tester.pump();
-      expect(newTourEntryFinder, findsOneWidget);
+      expect(newItemEntryFinder, findsOneWidget);
 
       // make navigation complete
       await tester.pump(Duration(milliseconds: 50));
@@ -165,16 +165,16 @@ void main() {
       await tester.pump();
 
       // empty item is still present after return from detail
-      expect(newTourEntryFinder, findsOneWidget);
+      expect(newItemEntryFinder, findsOneWidget);
 
       // wait for empty item to be removed
       await tester.pump(Duration(milliseconds: 1000));
-      expect(newTourEntryFinder, findsNothing);
+      expect(newItemEntryFinder, findsNothing);
     });
 
     testWidgets('Non-empty item is not removed', (WidgetTester tester) async {
       await tester
-          .pumpWidget(createTourOverviewScreen(navObservers: [routeObserver]));
+          .pumpWidget(createItemOverviewScreen(navObservers: [routeObserver]));
 
       final someText = 'abcd';
       final newEntryFinder = listTileFinder(someText);
@@ -208,10 +208,10 @@ void main() {
         'my test item 2',
         'my test item 3'
       ];
-      final tourListModel = createTourListModelWithEntries(testStrings);
+      final itemListModel = createItemListModelWithEntries(testStrings);
 
-      await tester.pumpWidget(createTourOverviewScreen(
-        tourListModel: tourListModel,
+      await tester.pumpWidget(createItemOverviewScreen(
+        itemListModel: itemListModel,
       ));
 
       final deletionOrder = [0, 2, 1];
