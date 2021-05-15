@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:tour_log/models/item.dart';
-import 'package:tour_log/models/tour.dart';
-import 'package:tour_log/models/item_list.dart';
 import 'package:provider/provider.dart';
+import 'package:tour_log/models/item.dart';
+import 'package:tour_log/models/item_list.dart';
 import 'package:tour_log/theme/style.dart';
 
 import '../../../routes.dart';
@@ -15,7 +14,7 @@ class ItemOverviewListEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final subtitle = this.itemModel.getOverviewListSubtitle();
+    final subtitle = itemModel.getOverviewListSubtitle();
     final subtitleWidget = subtitle != null ? Text(subtitle) : null;
     return Slidable(
         actionPane: SlidableDrawerActionPane(),
@@ -32,7 +31,7 @@ class ItemOverviewListEntry extends StatelessWidget {
           ),
         ],
         child: ListTile(
-            title: Text(this.itemModel.getOverviewListTitle()),
+            title: Text(itemModel.getOverviewListTitle()),
             subtitle: subtitleWidget,
             onTap: () {
               context.read<ItemListModel>().selectItem(itemModel.itemKey);

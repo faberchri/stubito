@@ -1,12 +1,9 @@
-import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:tour_log/models/field_spec.dart';
+import 'package:tour_log/models/field.dart';
 import 'package:tour_log/models/item.dart';
-import 'package:tour_log/models/item_spec.dart';
-import 'package:tour_log/models/tour.dart';
 import 'package:tour_log/models/item_list.dart';
 
 import 'components/detail_text_input_field.dart';
@@ -21,7 +18,6 @@ class ItemDetail extends StatefulWidget {
 }
 
 class _ItemDetailState extends State<ItemDetail> {
-
   final fieldModelChanges = BehaviorSubject<FieldModel>();
 
   ItemModel? itemModel;
@@ -29,21 +25,20 @@ class _ItemDetailState extends State<ItemDetail> {
   @override
   void initState() {
     super.initState();
-    this.itemModel = context.read<ItemListModel>().getSelectedOrNewItem();
+    itemModel = context.read<ItemListModel>().getSelectedOrNewItem();
   }
 
   void _initModelUpdaters(BuildContext context) {
-
-      fieldModelChanges.listen((value) {
-        final localItemModel = itemModel;
-        if (localItemModel != null) {
-          final newItemModel = localItemModel.copy(value);
-          context.read<ItemListModel>().updateItem(newItemModel);
-          setState(() {
-            itemModel = newItemModel;
-          });
-        }
-      });
+    fieldModelChanges.listen((value) {
+      final localItemModel = itemModel;
+      if (localItemModel != null) {
+        final newItemModel = localItemModel.copy(value);
+        context.read<ItemListModel>().updateItem(newItemModel);
+        setState(() {
+          itemModel = newItemModel;
+        });
+      }
+    });
   }
 
   @override
@@ -51,21 +46,23 @@ class _ItemDetailState extends State<ItemDetail> {
     _initModelUpdaters(context);
 
     final widgetResolverVisitor = _WidgetResolverVisitor(fieldModelChanges);
-    final fieldWidgets = itemModel!.fields.map((e) => e.accept(widgetResolverVisitor)).toList();
+    final fieldWidgets =
+        itemModel!.fields.map((e) => e.accept(widgetResolverVisitor)).toList();
 
     return WillPopScope(
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text('Tour Details'),
-          ),
-          body: ListView(children: fieldWidgets),
+      onWillPop: () {
+        // Required for proper animation on quick addition of new item.
+        // (prevent wrong 'remove empty animation')
+        FocusScope.of(context).focusedChild?.unfocus();
+        return Future.value(true);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Tour Details'),
         ),
-        onWillPop: () {
-          // Required for proper animation on quick addition of new item.
-          // (prevent wrong 'remove empty animation')
-          FocusScope.of(context).focusedChild?.unfocus();
-          return Future.value(true);
-        });
+        body: ListView(children: fieldWidgets),
+      ),
+    );
   }
 
   @override
@@ -76,7 +73,6 @@ class _ItemDetailState extends State<ItemDetail> {
 }
 
 class _WidgetResolverVisitor extends FieldModelVisitor<Widget> {
-
   final BehaviorSubject<FieldModel> subject;
 
   _WidgetResolverVisitor(this.subject);

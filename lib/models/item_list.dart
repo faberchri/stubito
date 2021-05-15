@@ -1,35 +1,34 @@
 import 'package:flutter/foundation.dart';
 import 'package:tour_log/models/item_spec.dart';
-import 'package:tour_log/models/tour.dart';
 
 import 'item.dart';
 
 class ItemListModel extends ChangeNotifier {
   final ItemSpec itemSpec;
-  final _itemsByKey = Map<ItemKey, List<ItemModel>>();
+  final _itemsByKey = <ItemKey, List<ItemModel>>{};
   ItemKey? _selected;
 
   ItemListModel(this.itemSpec);
 
   ItemModel newItem() {
-    final newModel = ItemModel(this.itemSpec);
+    final newModel = ItemModel(itemSpec);
     print(newModel);
-    this._itemsByKey[newModel.itemKey] = [newModel];
-    this._selected = newModel.itemKey;
+    _itemsByKey[newModel.itemKey] = [newModel];
+    _selected = newModel.itemKey;
     _notify();
     return newModel;
   }
 
   ItemModel getSelectedOrNewItem() {
     if (_selected != null) {
-      return this._itemsByKey[_selected]!.last;
+      return _itemsByKey[_selected]!.last;
     }
     return newItem();
   }
 
   void selectItem(ItemKey key) {
-    if (_itemsByKey.containsKey(key) && this._selected != key) {
-      this._selected = key;
+    if (_itemsByKey.containsKey(key) && _selected != key) {
+      _selected = key;
       _notify();
     }
   }
@@ -42,20 +41,20 @@ class ItemListModel extends ChangeNotifier {
   }
 
   void updateItem(ItemModel newModel) {
-    final prevModels = this._itemsByKey[newModel.itemKey];
+    final prevModels = _itemsByKey[newModel.itemKey];
     if (prevModels != null && prevModels.last != newModel) {
       prevModels.add(newModel);
       _notify();
       return;
     }
     if (prevModels == null && !newModel.hasAllDefaultValues()) {
-      this._itemsByKey[newModel.itemKey] = [newModel];
+      _itemsByKey[newModel.itemKey] = [newModel];
       _notify();
     }
   }
 
   void deleteItem(ItemKey key) {
-    final removedFromMap = this._itemsByKey.remove(key) != null;
+    final removedFromMap = _itemsByKey.remove(key) != null;
     var unselected = false;
     if (key == _selected) {
       _selected = null;
@@ -86,7 +85,8 @@ class ItemListModel extends ChangeNotifier {
   }
 
   void _notify() {
-    print('selected: ${_selected?.id} | ${allItems().map((e) => e.itemKey.id)}');
+    print(
+        'selected: ${_selected?.id} | ${allItems().map((e) => e.itemKey.id)}');
     notifyListeners();
   }
 }

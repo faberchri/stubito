@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tour_log/models/item_list.dart';
-import 'package:tour_log/models/item_spec.dart';
 import 'package:tour_log/screens/item_detail/item_detail.dart';
 
 import '../../util/helpers.dart';
@@ -17,9 +16,8 @@ Widget createTourDetailScreen({
     tourListModel.newItem();
   }
   return createTestApp(ItemDetail.routeName,
-        navObservers: navObservers, itemListModel: tourListModel);
+      navObservers: navObservers, itemListModel: tourListModel);
 }
-
 
 void main() {
   group('TourDetail widget tests', () {
@@ -36,8 +34,8 @@ void main() {
     testWidgets('Has an input field for due date', (WidgetTester tester) async {
       await tester.pumpWidget(createTourDetailScreen());
       expect(find.text('Bis wann?'), findsOneWidget);
-      expect(find.widgetWithIcon(ElevatedButton, Icons.calendar_today), findsOneWidget);
+      expect(find.widgetWithIcon(ElevatedButton, Icons.calendar_today),
+          findsOneWidget);
     });
-
   });
 }

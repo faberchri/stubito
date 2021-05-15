@@ -1,14 +1,8 @@
 import 'dart:collection';
 
-
-import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
-import 'package:uuid/uuid.dart';
-
 import 'field_spec.dart';
 
 abstract class ItemSpec {
-
   abstract final String itemNamePlural;
 
   abstract final TextFieldSpec overviewListTitleField;
@@ -16,11 +10,9 @@ abstract class ItemSpec {
   abstract final TextFieldSpec? overviewListSubtitleField;
 
   abstract final UnmodifiableListView<FieldSpec> fields;
-
 }
 
 class TodoItemSpec implements ItemSpec {
-
   @override
   String get itemNamePlural => 'Todos';
 
@@ -39,18 +31,16 @@ class TodoItemSpec implements ItemSpec {
   TodoItemSpec._(this.overviewListTitleField, this.fields);
 
   factory TodoItemSpec() {
-
-    final overviewListTitleField = TextFieldSpec('Titel', true, 'Was gibt es zu tun?');
-    final UnmodifiableListView<FieldSpec> fields
-    = UnmodifiableListView([
+    final overviewListTitleField =
+        TextFieldSpec('Titel', true, 'Was gibt es zu tun?');
+    final fields = UnmodifiableListView<FieldSpec>([
       overviewListTitleField,
-      SelectionFieldSpec('Prio', true, UnmodifiableListView(['tief', 'mittel', 'hoch'])),
-      DateFieldSpec('Bis wann erledigt?', true, initialValueProvider: () => DateTime.now().add(Duration(days: 1)))
+      SelectionFieldSpec(
+          'Prio', true, UnmodifiableListView(['tief', 'mittel', 'hoch'])),
+      DateFieldSpec('Bis wann erledigt?', true,
+          initialValueProvider: () => DateTime.now().add(Duration(days: 1)))
     ]);
 
     return TodoItemSpec._(overviewListTitleField, fields);
   }
-
-
 }
-

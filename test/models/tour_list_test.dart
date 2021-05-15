@@ -1,7 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tour_log/models/item.dart';
-import 'package:tour_log/models/item_spec.dart';
-import 'package:tour_log/models/tour.dart';
 import 'package:tour_log/models/item_list.dart';
 
 import '../util/helpers.dart';
@@ -17,7 +15,7 @@ void main() {
     test('Model contains one after newTour() call', () {
       final l = ItemListModelWithNotificationCount();
       final m = l.newItem();
-      expect(l.allItems(), containsAllInOrder([m]));
+      expect(l.allItems(), containsAllInOrder(<ItemModel>[m]));
       expect(l.notificationCount, 1);
     });
 
@@ -31,7 +29,7 @@ void main() {
     test('New model is created if nothing is selected', () {
       final l = ItemListModelWithNotificationCount();
       final m = l.getSelectedOrNewItem();
-      expect(l.allItems(), containsAllInOrder([m]));
+      expect(l.allItems(), containsAllInOrder(<ItemModel>[m]));
       expect(l.notificationCount, 1);
     });
 
@@ -41,7 +39,7 @@ void main() {
       final m2 = l.newItem();
       l.selectItem(m1.itemKey);
       final m3 = l.getSelectedOrNewItem();
-      expect(l.allItems(), containsAllInOrder([m2, m1]));
+      expect(l.allItems(), containsAllInOrder(<ItemModel>[m2, m1]));
       expect(m1, m3);
       expect(l.notificationCount, 3);
     });
@@ -81,7 +79,7 @@ void main() {
       final l = ItemListModelWithNotificationCount();
       final m1 = newItemWithTitle('bla');
       l.updateItem(m1);
-      expect(l.allItems(), containsAllInOrder([m1]));
+      expect(l.allItems(), containsAllInOrder(<ItemModel>[m1]));
       expect(l.notificationCount, 1);
     });
 
@@ -96,23 +94,23 @@ void main() {
       final l = ItemListModelWithNotificationCount();
       final m1 = l.newItem();
       final m2 = l.newItem();
-      expect(l.allItems(), containsAllInOrder([m2, m1]));
+      expect(l.allItems(), containsAllInOrder(<ItemModel>[m2, m1]));
       final m1Mod = setTitle(m1, 'hfbg');
       l.updateItem(m1Mod);
-      expect(l.allItems(), containsAllInOrder([m2, m1Mod]));
+      expect(l.allItems(), containsAllInOrder(<ItemModel>[m2, m1Mod]));
       expect(l.notificationCount, 3);
     });
 
     test('Update does not notify if model unchanged', () {
       final l = ItemListModelWithNotificationCount();
       final m = l.newItem();
-      expect(l.allItems(), containsAllInOrder([m]));
+      expect(l.allItems(), containsAllInOrder(<ItemModel>[m]));
       final title = 'hfbg';
       final mMod1 = setTitle(m, title);
       l.updateItem(mMod1);
-      expect(l.allItems(), containsAllInOrder([mMod1]));
+      expect(l.allItems(), containsAllInOrder(<ItemModel>[mMod1]));
       l.updateItem(setTitle(mMod1, title));
-      expect(l.allItems(), containsAllInOrder([mMod1]));
+      expect(l.allItems(), containsAllInOrder(<ItemModel>[mMod1]));
       expect(l.notificationCount, 2);
     });
 
@@ -129,9 +127,9 @@ void main() {
       final l = ItemListModelWithNotificationCount();
       final m1 = l.newItem();
       final m2 = l.newItem();
-      expect(l.allItems(), containsAllInOrder([m2, m1]));
+      expect(l.allItems(), containsAllInOrder(<ItemModel>[m2, m1]));
       l.deleteItem(m1.itemKey);
-      expect(l.allItems(), containsAllInOrder([m2]));
+      expect(l.allItems(), containsAllInOrder(<ItemModel>[m2]));
       expect(l.notificationCount, 3);
     });
 
@@ -165,10 +163,10 @@ void main() {
       final m2 = setTitle(l.newItem(), 'ceve');
       final m3 = l.newItem();
       l.updateItem(m2);
-      expect(l.allItems(), containsAllInOrder([m3, m2, m1]));
+      expect(l.allItems(), containsAllInOrder(<ItemModel>[m3, m2, m1]));
       expect(l.notificationCount, 4);
       l.removeEmptyItems();
-      expect(l.allItems(), containsAllInOrder([m2]));
+      expect(l.allItems(), containsAllInOrder(<ItemModel>[m2]));
       expect(l.notificationCount, 5);
     });
 
@@ -178,10 +176,10 @@ void main() {
       l.updateItem(m1);
       final m2 = setTitle(l.newItem(), 'ceve');
       l.updateItem(m2);
-      expect(l.allItems(), containsAllInOrder([m2, m1]));
+      expect(l.allItems(), containsAllInOrder(<ItemModel>[m2, m1]));
       expect(l.notificationCount, 4);
       l.removeEmptyItems();
-      expect(l.allItems(), containsAllInOrder([m2, m1]));
+      expect(l.allItems(), containsAllInOrder(<ItemModel>[m2, m1]));
       expect(l.notificationCount, 4);
     });
 
@@ -201,7 +199,7 @@ void main() {
       final m1 = l.newItem();
       final m2 = l.newItem();
       final m3 = l.newItem();
-      expect(l.allItems(), containsAllInOrder([m3, m2, m1]));
+      expect(l.allItems(), containsAllInOrder(<ItemModel>[m3, m2, m1]));
     });
 
     test('Querying models does not notify', () {
@@ -209,7 +207,7 @@ void main() {
       final m1 = l.newItem();
       final m2 = l.newItem();
       expect(l.notificationCount, 2);
-      expect(l.allItems(), containsAllInOrder([m2, m1]));
+      expect(l.allItems(), containsAllInOrder(<ItemModel>[m2, m1]));
       expect(l.notificationCount, 2);
     });
 
@@ -218,13 +216,11 @@ void main() {
       final m1 = l.newItem();
       final m2 = l.newItem();
       expect(l.getSelectedOrNewItem(), m2);
-      expect(l.allItems(), containsAllInOrder([m2, m1]));
+      expect(l.allItems(), containsAllInOrder(<ItemModel>[m2, m1]));
       expect(l.getSelectedOrNewItem(), m2);
     });
   });
 }
-
-
 
 ItemModel newEmptyItem() {
   return ItemModel(todoItemSpec);
@@ -232,19 +228,25 @@ ItemModel newEmptyItem() {
 
 ItemModel newItemWithTitle(String title) {
   final m = newEmptyItem();
-  final newTitle = m.fields.where((element) => element.spec.label == 'Titel').first.copy(title);
+  final newTitle = m.fields
+      .where((element) => element.spec.label == 'Titel')
+      .first
+      .copy(title);
   return m.copy(newTitle);
 }
 
 ItemModel setTitle(ItemModel prevModel, String title) {
-  final newTitle = prevModel.fields.where((element) => element.spec.label == 'Titel').first.copy(title);
+  final newTitle = prevModel.fields
+      .where((element) => element.spec.label == 'Titel')
+      .first
+      .copy(title);
   return prevModel.copy(newTitle);
 }
 
 class ItemListModelWithNotificationCount extends ItemListModel {
   var notificationCount = 0;
 
-  ItemListModelWithNotificationCount(): super(todoItemSpec);
+  ItemListModelWithNotificationCount() : super(todoItemSpec);
 
   @override
   void notifyListeners() {

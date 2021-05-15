@@ -4,11 +4,11 @@ import 'package:flutter_test/flutter_test.dart';
 typedef OnObservation = void Function(
     Route<dynamic>? route, Route<dynamic>? previousRoute);
 
-isNullRoute(Route<dynamic>? route) {
+void isNullRoute(Route<dynamic>? route) {
   expect(route, isNull);
 }
 
-isPageRoute(String routeName, Route<dynamic>? route) {
+void isPageRoute(String routeName, Route<dynamic>? route) {
   expect(route is PageRoute && route.settings.name == routeName, isTrue);
 }
 

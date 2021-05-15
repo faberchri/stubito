@@ -6,7 +6,6 @@ import 'package:tour_log/routes.dart';
 import 'package:tour_log/screens/item_detail/item_detail.dart';
 import 'package:tour_log/screens/item_overview/item_overview.dart';
 
-
 import '../../util/finders.dart';
 import '../../util/helpers.dart';
 import '../../util/test_app.dart';
@@ -216,7 +215,7 @@ void main() {
       ));
 
       final deletionOrder = [0, 2, 1];
-      final deleted = Set<String>();
+      final deleted = <String>{};
       for (final testStringIndex in deletionOrder) {
         testStrings
             .where((ts) => !deleted.contains(ts))

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tour_log/models/item.dart';
-import 'package:tour_log/models/tour.dart';
 import 'package:tour_log/models/item_list.dart';
 
 import 'list_entry.dart';
@@ -46,7 +45,8 @@ class _ItemListState extends State<ItemList> {
     return animatedList;
   }
 
-  void _removeMissingItems(Set<ItemKey> prevItemKeys, Set<ItemKey> currentItemKeys) {
+  void _removeMissingItems(
+      Set<ItemKey> prevItemKeys, Set<ItemKey> currentItemKeys) {
     final removedKeys = prevItemKeys.difference(currentItemKeys);
     _itemModels.asMap().forEach((index, itemModel) {
       if (removedKeys.contains(itemModel.itemKey)) {
@@ -70,7 +70,9 @@ class _ItemListState extends State<ItemList> {
     });
   }
 
-  Widget _buildItem(BuildContext context, ItemModel itemModel, Animation<double> animation, {double x = -1}) {
+  Widget _buildItem(
+      BuildContext context, ItemModel itemModel, Animation<double> animation,
+      {double x = -1}) {
     return Padding(
       padding: const EdgeInsets.all(2.0),
       child: SlideTransition(

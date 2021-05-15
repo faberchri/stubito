@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tour_log/models/item_spec.dart';
 
 import '../util/helpers.dart';
 

@@ -49,9 +49,9 @@ class TourModel extends Equatable {
     this.perceivedRisk = '',
     this.criticalSections = '',
     this.remarks = '',
-  })  : this.key = key ?? TourKey(),
-        this.date = date ?? DateTime.now(),
-        this.participants = List.unmodifiable(participants);
+  })  : key = key ?? TourKey(),
+        date = date ?? DateTime.now(),
+        participants = List.unmodifiable(participants);
 
   @override
   List<Object> get props => [
@@ -73,7 +73,7 @@ class TourModel extends Equatable {
       ];
 
   bool hasAllDefaultValues() {
-    final defaultModel = TourModel(key: this.key, date: this.date);
+    final defaultModel = TourModel(key: key, date: date);
     return defaultModel == this;
   }
 
@@ -94,7 +94,7 @@ class TourModel extends Equatable {
     String? remarks,
   }) {
     return TourModel(
-      key: this.key,
+      key: key,
       title: title ?? this.title,
       date: date ?? this.date,
       location: location ?? this.location,

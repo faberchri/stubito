@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:tour_log/models/field_spec.dart';
+import 'package:tour_log/models/field.dart';
 
 class ItemDetailTextInputField extends StatefulWidget {
   final Subject<FieldModel> updateSubject;
@@ -10,7 +10,7 @@ class ItemDetailTextInputField extends StatefulWidget {
 
   @override
   State createState() {
-    return _ItemDetailTextInputFieldState(this.textFieldModel.value);
+    return _ItemDetailTextInputFieldState(textFieldModel.value);
   }
 }
 
@@ -48,7 +48,8 @@ class _ItemDetailTextInputFieldState extends State<ItemDetailTextInputField> {
     return Focus(
         onFocusChange: (hasFocus) {
           if (!hasFocus) {
-            widget.updateSubject.add(widget.textFieldModel.copy(_controller.text));
+            widget.updateSubject
+                .add(widget.textFieldModel.copy(_controller.text));
           }
         },
         child: TextField(
