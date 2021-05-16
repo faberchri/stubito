@@ -70,7 +70,7 @@ class _ItemDetailState extends State<ItemDetail> {
   List<Widget> createFieldWidgets() {
     final im = itemModel;
     if (im != null) {
-      im.fields
+      return im.fields
           .map(mapField(
             onTextField: (m) => ItemDetailTextInputField(m, fieldModelChanges),
             onSelectionField: (m) => Text(
