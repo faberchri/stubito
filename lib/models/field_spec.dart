@@ -1,13 +1,17 @@
 import 'dart:collection';
 
+import 'package:flutter/foundation.dart';
+
 typedef InitialValueProvider<T> = T Function();
 
+@immutable
 abstract class FieldSpecVisitor<R> {
   R visitTextFieldSpec(TextFieldSpec spec);
   R visitSelectionFieldSpec(SelectionFieldSpec spec);
   R visitDateFieldSpec(DateFieldSpec spec);
 }
 
+@immutable
 abstract class FieldSpec {
   final String label;
   final bool showLabelInGui;
@@ -22,7 +26,7 @@ class TextFieldSpec extends FieldSpec {
 
   TextFieldSpec(
       {required String label,
-      required bool showLabelInGui,
+      bool showLabelInGui = true,
       required this.placeholderText,
       String initialValue = ''})
       : initialValueProvider = (() => initialValue),
@@ -40,7 +44,7 @@ class SelectionFieldSpec extends FieldSpec {
 
   SelectionFieldSpec(
       {required String label,
-      required bool showLabelInGui,
+      bool showLabelInGui = true,
       required this.options,
       String? initialValue})
       : initialValueProvider = (() => initialValue ?? options[0]),
@@ -57,7 +61,7 @@ class DateFieldSpec extends FieldSpec {
 
   DateFieldSpec(
       {required String label,
-      required bool showLabelInGui,
+      bool showLabelInGui = true,
       InitialValueProvider<DateTime>? initialValueProvider})
       : initialValueProvider = (initialValueProvider ?? () => DateTime.now()),
         super(label: label, showLabelInGui: showLabelInGui);

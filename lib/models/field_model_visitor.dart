@@ -1,5 +1,8 @@
+import 'package:flutter/material.dart';
+
 import 'field_model.dart';
 
+@immutable
 abstract class FieldModelVisitor<R> {
   R visitTextFieldModel(TextFieldModel model);
   R visitSelectionFieldModel(SelectionFieldModel model);

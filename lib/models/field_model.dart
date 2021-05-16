@@ -1,8 +1,10 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
 import 'field_model_visitor.dart';
 import 'field_spec.dart';
 
+@immutable
 abstract class FieldModel {
   abstract final FieldSpec spec;
   R accept<R>(FieldModelVisitor<R> visitor);
