@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tour_log/models/item_list.dart';
+import 'package:tour_log/models/item_list_model.dart';
 import 'package:tour_log/screens/item_detail/item_detail.dart';
 
 import '../../util/helpers.dart';

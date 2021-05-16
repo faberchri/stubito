@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tour_log/models/item_list.dart';
+import 'package:tour_log/models/item_list_model.dart';
 import 'package:tour_log/routes.dart';
 import 'package:tour_log/screens/item_detail/item_detail.dart';
 import 'package:tour_log/screens/item_overview/item_overview.dart';
@@ -81,7 +81,7 @@ void main() {
         'my test item 2',
         'my test item 3'
       ];
-      final itemListModel = createItemListModelWithEntries(testStrings);
+      final itemListModel = createItemListModelWithTodoEntries(testStrings);
 
       await tester.pumpWidget(createItemOverviewScreen(
         navObservers: [testObserver],
@@ -131,7 +131,8 @@ void main() {
     testWidgets('Tap on add button creates entry', (WidgetTester tester) async {
       await tester.pumpWidget(createItemOverviewScreen());
 
-      final newItemEntryFinder = listTileFinder('Neues Todo');
+      final newItemEntryFinder =
+          listTileFinder(todoItemSpec.overviewListDefaultTitle);
       expect(newItemEntryFinder, findsNothing);
 
       await tester.tap(addButtonFinder());
@@ -143,7 +144,8 @@ void main() {
     testWidgets('Empty item is removed', (WidgetTester tester) async {
       await tester
           .pumpWidget(createItemOverviewScreen(navObservers: [routeObserver]));
-      final newItemEntryFinder = listTileFinder('Neues Todo');
+      final newItemEntryFinder =
+          listTileFinder(todoItemSpec.overviewListDefaultTitle);
 
       // check no items present
       expect(newItemEntryFinder, findsNothing);
@@ -208,7 +210,7 @@ void main() {
         'my test item 2',
         'my test item 3'
       ];
-      final itemListModel = createItemListModelWithEntries(testStrings);
+      final itemListModel = createItemListModelWithTodoEntries(testStrings);
 
       await tester.pumpWidget(createItemOverviewScreen(
         itemListModel: itemListModel,

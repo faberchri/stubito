@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:tour_log/models/field.dart';
+import 'package:tour_log/models/field_model.dart';
 
 class ItemDetailTextInputField extends StatefulWidget {
   final Subject<FieldModel> updateSubject;

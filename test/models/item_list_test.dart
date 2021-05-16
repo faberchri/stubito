@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tour_log/models/item.dart';
-import 'package:tour_log/models/item_list.dart';
+import 'package:tour_log/models/item_list_model.dart';
+import 'package:tour_log/models/item_model.dart';
 
 import '../util/helpers.dart';
 
@@ -54,7 +54,7 @@ void main() {
     test('No selection if unknown', () {
       final l = ItemListModelWithNotificationCount();
       final m1 = l.newItem();
-      l.selectItem(newEmptyItem().itemKey);
+      l.selectItem(newEmptyTodoItem().itemKey);
       expect(l.notificationCount, 1);
       expect(l.getSelectedOrNewItem(), m1);
     });
@@ -77,7 +77,7 @@ void main() {
 
     test('Update adds model if unknown and not default', () {
       final l = ItemListModelWithNotificationCount();
-      final m1 = newItemWithTitle('bla');
+      final m1 = newTodoItemWithTitle('bla');
       l.updateItem(m1);
       expect(l.allItems(), containsAllInOrder(<ItemModel>[m1]));
       expect(l.notificationCount, 1);
@@ -85,7 +85,7 @@ void main() {
 
     test('Update does not adds model if unknown and default', () {
       final l = ItemListModelWithNotificationCount();
-      l.updateItem(newEmptyItem());
+      l.updateItem(newEmptyTodoItem());
       expect(l.allItems(), isEmpty);
       expect(l.notificationCount, 0);
     });
@@ -95,7 +95,7 @@ void main() {
       final m1 = l.newItem();
       final m2 = l.newItem();
       expect(l.allItems(), containsAllInOrder(<ItemModel>[m2, m1]));
-      final m1Mod = setTitle(m1, 'hfbg');
+      final m1Mod = setTodoItemTitle(m1, 'hfbg');
       l.updateItem(m1Mod);
       expect(l.allItems(), containsAllInOrder(<ItemModel>[m2, m1Mod]));
       expect(l.notificationCount, 3);
@@ -106,10 +106,10 @@ void main() {
       final m = l.newItem();
       expect(l.allItems(), containsAllInOrder(<ItemModel>[m]));
       final title = 'hfbg';
-      final mMod1 = setTitle(m, title);
+      final mMod1 = setTodoItemTitle(m, title);
       l.updateItem(mMod1);
       expect(l.allItems(), containsAllInOrder(<ItemModel>[mMod1]));
-      l.updateItem(setTitle(mMod1, title));
+      l.updateItem(setTodoItemTitle(mMod1, title));
       expect(l.allItems(), containsAllInOrder(<ItemModel>[mMod1]));
       expect(l.notificationCount, 2);
     });
@@ -118,7 +118,7 @@ void main() {
       final l = ItemListModelWithNotificationCount();
       final m = l.newItem();
       expect(l.getSelectedOrNewItem(), m);
-      l.updateItem(newItemWithTitle('bla'));
+      l.updateItem(newTodoItemWithTitle('bla'));
       expect(l.getSelectedOrNewItem(), m);
       expect(l.notificationCount, 2);
     });
@@ -160,7 +160,7 @@ void main() {
     test('Remove empty models works', () {
       final l = ItemListModelWithNotificationCount();
       final m1 = l.newItem();
-      final m2 = setTitle(l.newItem(), 'ceve');
+      final m2 = setTodoItemTitle(l.newItem(), 'ceve');
       final m3 = l.newItem();
       l.updateItem(m2);
       expect(l.allItems(), containsAllInOrder(<ItemModel>[m3, m2, m1]));
@@ -172,9 +172,9 @@ void main() {
 
     test('Remove empty does not notify if none removed', () {
       final l = ItemListModelWithNotificationCount();
-      final m1 = setTitle(l.newItem(), 'ff');
+      final m1 = setTodoItemTitle(l.newItem(), 'ff');
       l.updateItem(m1);
-      final m2 = setTitle(l.newItem(), 'ceve');
+      final m2 = setTodoItemTitle(l.newItem(), 'ceve');
       l.updateItem(m2);
       expect(l.allItems(), containsAllInOrder(<ItemModel>[m2, m1]));
       expect(l.notificationCount, 4);
@@ -220,27 +220,6 @@ void main() {
       expect(l.getSelectedOrNewItem(), m2);
     });
   });
-}
-
-ItemModel newEmptyItem() {
-  return ItemModel(todoItemSpec);
-}
-
-ItemModel newItemWithTitle(String title) {
-  final m = newEmptyItem();
-  final newTitle = m.fields
-      .where((element) => element.spec.label == 'Titel')
-      .first
-      .copy(title);
-  return m.copy(newTitle);
-}
-
-ItemModel setTitle(ItemModel prevModel, String title) {
-  final newTitle = prevModel.fields
-      .where((element) => element.spec.label == 'Titel')
-      .first
-      .copy(title);
-  return prevModel.copy(newTitle);
 }
 
 class ItemListModelWithNotificationCount extends ItemListModel {

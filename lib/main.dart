@@ -5,7 +5,7 @@ import 'package:tour_log/routes.dart';
 import 'package:tour_log/screens/item_overview/item_overview.dart';
 import 'package:tour_log/theme/style.dart';
 
-import 'models/item_list.dart';
+import 'models/item_list_model.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,7 +16,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (context) => ItemListModel(TodoItemSpec()))
+          ChangeNotifierProvider(
+              create: (context) => ItemListModel(TodoItemSpec()))
         ],
         child: MaterialApp(
           title: 'Tour Log',

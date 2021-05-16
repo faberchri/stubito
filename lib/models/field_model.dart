@@ -1,28 +1,17 @@
 import 'package:equatable/equatable.dart';
 
+import 'field_model_visitor.dart';
 import 'field_spec.dart';
 
-abstract class FieldModelVisitor<R> {
-  R visitTextFieldModel(TextFieldModel model);
-
-  R visitSelectionFieldModel(SelectionFieldModel model);
-  R visitDateFieldModel(DateFieldModel model);
-}
-
-abstract class FieldModel<T> {
-  abstract final FieldSpec<T> spec;
-  abstract final T value;
-
-  FieldModel<T> copy(T newValue);
+abstract class FieldModel {
+  abstract final FieldSpec spec;
   R accept<R>(FieldModelVisitor<R> visitor);
 }
 
-class TextFieldModel with EquatableMixin implements FieldModel<String> {
-
+class TextFieldModel with EquatableMixin implements FieldModel {
   @override
   final TextFieldSpec spec;
 
-  @override
   final String value;
 
   TextFieldModel._(this.spec, this.value);
@@ -34,7 +23,6 @@ class TextFieldModel with EquatableMixin implements FieldModel<String> {
   @override
   List<Object> get props => [spec, value];
 
-  @override
   TextFieldModel copy(String newValue) {
     return TextFieldModel._(spec, newValue);
   }
@@ -45,12 +33,10 @@ class TextFieldModel with EquatableMixin implements FieldModel<String> {
   }
 }
 
-class SelectionFieldModel with EquatableMixin implements FieldModel<String> {
-
+class SelectionFieldModel with EquatableMixin implements FieldModel {
   @override
   final SelectionFieldSpec spec;
 
-  @override
   final String value;
 
   SelectionFieldModel._(this.spec, this.value);
@@ -62,7 +48,6 @@ class SelectionFieldModel with EquatableMixin implements FieldModel<String> {
   @override
   List<Object> get props => [spec, value];
 
-  @override
   SelectionFieldModel copy(String newValue) {
     return SelectionFieldModel._(spec, newValue);
   }
@@ -73,12 +58,10 @@ class SelectionFieldModel with EquatableMixin implements FieldModel<String> {
   }
 }
 
-class DateFieldModel with EquatableMixin implements FieldModel<DateTime> {
-
+class DateFieldModel with EquatableMixin implements FieldModel {
   @override
   final DateFieldSpec spec;
 
-  @override
   final DateTime value;
 
   DateFieldModel._(this.spec, this.value);
@@ -90,7 +73,6 @@ class DateFieldModel with EquatableMixin implements FieldModel<DateTime> {
   @override
   List<Object> get props => [spec, value];
 
-  @override
   DateFieldModel copy(DateTime newValue) {
     return DateFieldModel._(spec, newValue);
   }

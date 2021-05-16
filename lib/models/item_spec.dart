@@ -13,6 +13,8 @@ abstract class ItemSpec {
 }
 
 class TodoItemSpec implements ItemSpec {
+  static const String titleFieldLabel = 'Titel';
+
   @override
   String get itemNamePlural => 'Todos';
 
@@ -31,13 +33,19 @@ class TodoItemSpec implements ItemSpec {
   TodoItemSpec._(this.overviewListTitleField, this.fields);
 
   factory TodoItemSpec() {
-    final overviewListTitleField =
-        TextFieldSpec('Titel', true, 'Was gibt es zu tun?');
+    final overviewListTitleField = TextFieldSpec(
+        label: titleFieldLabel,
+        showLabelInGui: true,
+        placeholderText: 'Was gibt es zu tun?');
     final fields = UnmodifiableListView<FieldSpec>([
       overviewListTitleField,
       SelectionFieldSpec(
-          'Prio', true, UnmodifiableListView(['tief', 'mittel', 'hoch'])),
-      DateFieldSpec('Bis wann erledigt?', true,
+          label: 'Prio',
+          showLabelInGui: true,
+          options: UnmodifiableListView(['tief', 'mittel', 'hoch'])),
+      DateFieldSpec(
+          label: 'Bis wann erledigt?',
+          showLabelInGui: true,
           initialValueProvider: () => DateTime.now().add(Duration(days: 1)))
     ]);
 

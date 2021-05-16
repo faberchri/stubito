@@ -8,21 +8,25 @@ abstract class FieldSpecVisitor<R> {
   R visitDateFieldSpec(DateFieldSpec spec);
 }
 
-abstract class FieldSpec<T> {
+abstract class FieldSpec {
   final String label;
   final bool showLabelInGui;
-  final InitialValueProvider<T> initialValueProvider;
 
-  FieldSpec(this.label, this.showLabelInGui, this.initialValueProvider);
+  FieldSpec({required this.label, required this.showLabelInGui});
   R accept<R>(FieldSpecVisitor<R> visitor);
 }
 
-class TextFieldSpec extends FieldSpec<String> {
+class TextFieldSpec extends FieldSpec {
   final String placeholderText;
+  final InitialValueProvider<String> initialValueProvider;
 
-  TextFieldSpec(String label, bool showLabelInGui, this.placeholderText,
-      {String initialValue = ''})
-      : super(label, showLabelInGui, () => '');
+  TextFieldSpec(
+      {required String label,
+      required bool showLabelInGui,
+      required this.placeholderText,
+      String initialValue = ''})
+      : initialValueProvider = (() => initialValue),
+        super(label: label, showLabelInGui: showLabelInGui);
 
   @override
   R accept<R>(FieldSpecVisitor<R> visitor) {
@@ -30,12 +34,17 @@ class TextFieldSpec extends FieldSpec<String> {
   }
 }
 
-class SelectionFieldSpec extends FieldSpec<String> {
+class SelectionFieldSpec extends FieldSpec {
   final UnmodifiableListView<String> options;
+  final InitialValueProvider<String> initialValueProvider;
 
-  SelectionFieldSpec(String label, bool showLabelInGui, this.options,
-      {String? initialValue})
-      : super(label, showLabelInGui, () => initialValue ?? options[0]);
+  SelectionFieldSpec(
+      {required String label,
+      required bool showLabelInGui,
+      required this.options,
+      String? initialValue})
+      : initialValueProvider = (() => initialValue ?? options[0]),
+        super(label: label, showLabelInGui: showLabelInGui);
 
   @override
   R accept<R>(FieldSpecVisitor<R> visitor) {
@@ -43,11 +52,15 @@ class SelectionFieldSpec extends FieldSpec<String> {
   }
 }
 
-class DateFieldSpec extends FieldSpec<DateTime> {
-  DateFieldSpec(String label, bool showLabelInGui,
-      {InitialValueProvider<DateTime>? initialValueProvider})
-      : super(label, showLabelInGui,
-            initialValueProvider ?? () => DateTime.now());
+class DateFieldSpec extends FieldSpec {
+  final InitialValueProvider<DateTime> initialValueProvider;
+
+  DateFieldSpec(
+      {required String label,
+      required bool showLabelInGui,
+      InitialValueProvider<DateTime>? initialValueProvider})
+      : initialValueProvider = (initialValueProvider ?? () => DateTime.now()),
+        super(label: label, showLabelInGui: showLabelInGui);
 
   @override
   R accept<R>(FieldSpecVisitor<R> visitor) {

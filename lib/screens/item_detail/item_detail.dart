@@ -1,10 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:tour_log/models/field.dart';
-import 'package:tour_log/models/item.dart';
-import 'package:tour_log/models/item_list.dart';
+import 'package:tour_log/models/field_model.dart';
+import 'package:tour_log/models/field_model_visitor.dart';
+import 'package:tour_log/models/item_list_model.dart';
+import 'package:tour_log/models/item_model.dart';
 
 import 'components/detail_text_input_field.dart';
 
@@ -30,9 +30,9 @@ class _ItemDetailState extends State<ItemDetail> {
 
   void _initModelUpdaters(BuildContext context) {
     fieldModelChanges.listen((value) {
-      final localItemModel = itemModel;
-      if (localItemModel != null) {
-        final newItemModel = localItemModel.copy(value);
+      final im = itemModel;
+      if (im != null) {
+        final newItemModel = im.copy(value);
         context.read<ItemListModel>().updateItem(newItemModel);
         setState(() {
           itemModel = newItemModel;
@@ -45,10 +45,6 @@ class _ItemDetailState extends State<ItemDetail> {
   Widget build(BuildContext context) {
     _initModelUpdaters(context);
 
-    final widgetResolverVisitor = _WidgetResolverVisitor(fieldModelChanges);
-    final fieldWidgets =
-        itemModel!.fields.map((e) => e.accept(widgetResolverVisitor)).toList();
-
     return WillPopScope(
       onWillPop: () {
         // Required for proper animation on quick addition of new item.
@@ -60,7 +56,7 @@ class _ItemDetailState extends State<ItemDetail> {
         appBar: AppBar(
           title: Text('Tour Details'),
         ),
-        body: ListView(children: fieldWidgets),
+        body: ListView(children: createFieldWidgets()),
       ),
     );
   }
@@ -70,25 +66,19 @@ class _ItemDetailState extends State<ItemDetail> {
     fieldModelChanges.close();
     super.dispose();
   }
-}
 
-class _WidgetResolverVisitor extends FieldModelVisitor<Widget> {
-  final BehaviorSubject<FieldModel> subject;
-
-  _WidgetResolverVisitor(this.subject);
-
-  @override
-  Widget visitTextFieldModel(TextFieldModel model) {
-    return ItemDetailTextInputField(model, subject);
-  }
-
-  @override
-  Widget visitDateFieldModel(DateFieldModel model) {
-    return Text(model.value.toIso8601String());
-  }
-
-  @override
-  Widget visitSelectionFieldModel(SelectionFieldModel model) {
-    return Text('Selected: ${model.value} - ${model.spec.options.toString()}');
+  List<Widget> createFieldWidgets() {
+    final im = itemModel;
+    if (im != null) {
+      im.fields
+          .map(mapField(
+            onTextField: (m) => ItemDetailTextInputField(m, fieldModelChanges),
+            onSelectionField: (m) => Text(
+                'Selected: ${m.value} - ${m.spec.options.toString()}'), // FIXME
+            onDateField: (m) => Text(m.value.toIso8601String()),
+          )) // FIXME
+          .toList();
+    }
+    return [];
   }
 }

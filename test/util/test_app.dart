@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tour_log/models/item_list.dart';
+import 'package:tour_log/models/item_list_model.dart';
 import 'package:tour_log/routes.dart';
 
 import 'helpers.dart';

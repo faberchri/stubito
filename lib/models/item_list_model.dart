@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:tour_log/models/item_spec.dart';
 
-import 'item.dart';
+import 'item_model.dart';
 
 class ItemListModel extends ChangeNotifier {
   final ItemSpec itemSpec;

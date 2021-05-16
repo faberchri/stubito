@@ -2,10 +2,12 @@ import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
+import 'package:tour_log/models/field_model_visitor.dart';
 import 'package:tour_log/models/item_spec.dart';
 import 'package:uuid/uuid.dart';
 
-import 'field.dart';
+import 'field_model.dart';
 import 'field_spec.dart';
 
 @immutable
@@ -62,13 +64,11 @@ class ItemModel extends Equatable {
       ];
 
   String getOverviewListTitle() {
-    final titleFieldModel = fields.firstWhere(
-        (element) => element.spec == itemSpec.overviewListTitleField);
-    final titleFieldDefaultModel = defaults.firstWhere(
-        (element) => element.spec == itemSpec.overviewListTitleField);
+    final titleFieldModel = fields.firstWhere(_overviewListTitleFieldFilter());
+    final titleFieldDefaultModel =
+        defaults.firstWhere(_overviewListTitleFieldFilter());
     if (titleFieldDefaultModel != titleFieldModel) {
-      return titleFieldModel.value
-          .toString(); // FIXME title string representation for all field types
+      return _toOverviewListStringRepresentation(titleFieldModel);
     }
     return itemSpec.overviewListDefaultTitle;
   }
@@ -77,13 +77,12 @@ class ItemModel extends Equatable {
     if (itemSpec.overviewListSubtitleField == null) {
       return null;
     }
-    final subtitleFieldModel = fields.firstWhere(
-        (element) => element.spec == itemSpec.overviewListSubtitleField);
-    final subtitleFieldDefaultModel = defaults.firstWhere(
-        (element) => element.spec == itemSpec.overviewListSubtitleField);
+    final subtitleFieldModel =
+        fields.firstWhere(_overviewListSubtitleFieldFilter());
+    final subtitleFieldDefaultModel =
+        defaults.firstWhere(_overviewListSubtitleFieldFilter());
     if (subtitleFieldDefaultModel != subtitleFieldModel) {
-      return subtitleFieldModel.value
-          .toString(); // FIXME title string representation for all field types
+      return _toOverviewListStringRepresentation(subtitleFieldModel);
     }
     return null;
   }
@@ -97,5 +96,20 @@ class ItemModel extends Equatable {
         .map((e) => e.spec == newFieldModel.spec ? newFieldModel : e)
         .toList());
     return ItemModel._(itemKey, itemSpec, newFields, defaults);
+  }
+
+  bool Function(FieldModel) _overviewListTitleFieldFilter() {
+    return (FieldModel m) => m.spec == itemSpec.overviewListTitleField;
+  }
+
+  bool Function(FieldModel) _overviewListSubtitleFieldFilter() {
+    return (FieldModel m) => m.spec == itemSpec.overviewListSubtitleField;
+  }
+
+  String _toOverviewListStringRepresentation(FieldModel model) {
+    return mapField(
+        onTextField: (m) => m.value,
+        onSelectionField: (m) => m.value,
+        onDateField: (m) => DateFormat.yMd().add_Hm().format(m.value))(model);
   }
 }
