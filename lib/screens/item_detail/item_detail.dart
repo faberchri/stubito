@@ -26,9 +26,10 @@ class _ItemDetailState extends State<ItemDetail> {
   void initState() {
     super.initState();
     itemModel = context.read<ItemListModel>().getSelectedOrNewItem();
+    _initModelUpdaters();
   }
 
-  void _initModelUpdaters(BuildContext context) {
+  void _initModelUpdaters() {
     fieldModelChanges.listen((value) {
       final im = itemModel;
       if (im != null) {
@@ -43,7 +44,6 @@ class _ItemDetailState extends State<ItemDetail> {
 
   @override
   Widget build(BuildContext context) {
-    _initModelUpdaters(context);
 
     return WillPopScope(
       onWillPop: () {
