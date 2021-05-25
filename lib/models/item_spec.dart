@@ -42,6 +42,8 @@ class TodoItemSpec implements ItemSpec {
       titleField,
       SelectionFieldSpec(
           label: 'Prio',
+          optionNamePlural: 'Prioritäten',
+          allowOptionFiltering: true,
           options: UnmodifiableListView(['tief', 'mittel', 'hoch'])),
       DateFieldSpec(
           label: 'Bis wann erledigt?',
@@ -85,6 +87,7 @@ class TourItemSpec implements ItemSpec {
           label: 'Dauer', placeholderText: 'Uhrzeit Start und Ende der Tour'),
       SelectionFieldSpec(
           label: 'Lawinengefahr',
+          optionNamePlural: 'Gefahrenstufen',
           options: UnmodifiableListView(
               ['gering', 'mässig', 'erheblich', 'gross', 'sehr gross'])),
       TextFieldSpec(

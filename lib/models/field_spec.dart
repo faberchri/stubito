@@ -41,13 +41,18 @@ class TextFieldSpec extends FieldSpec {
 class SelectionFieldSpec extends FieldSpec {
   final UnmodifiableListView<String> options;
   final InitialValueProvider<String> initialValueProvider;
+  final String optionNamePlural;
+  final bool allowOptionFiltering;
 
   SelectionFieldSpec(
       {required String label,
       bool showLabelInGui = true,
       required this.options,
-      String? initialValue})
+      String? initialValue,
+      required this.optionNamePlural,
+      bool? allowOptionFiltering})
       : initialValueProvider = (() => initialValue ?? options[0]),
+        allowOptionFiltering = allowOptionFiltering ?? options.length > 5,
         super(label: label, showLabelInGui: showLabelInGui);
 
   @override

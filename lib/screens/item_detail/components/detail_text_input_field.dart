@@ -24,7 +24,6 @@ class _ItemDetailTextInputFieldState extends State<ItemDetailTextInputField> {
   @override
   void initState() {
     super.initState();
-
     _debounceChange.debounceTime(Duration(milliseconds: 500)).listen((event) {
       if (!widget.updateSubject.isClosed) {
         widget.updateSubject.add(widget.textFieldModel.copy(event));
@@ -55,8 +54,12 @@ class _ItemDetailTextInputFieldState extends State<ItemDetailTextInputField> {
         child: TextField(
             controller: _controller,
             decoration: InputDecoration(
+              labelText: widget.textFieldModel.spec.showLabelInGui
+                  ? widget.textFieldModel.spec.label
+                  : null,
               border: OutlineInputBorder(),
               hintText: widget.textFieldModel.spec.placeholderText,
+              floatingLabelBehavior: FloatingLabelBehavior.auto,
             )));
   }
 }

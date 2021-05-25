@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tour_log/models/item_list_model.dart';
+import 'package:tour_log/models/item_spec.dart';
 import 'package:tour_log/screens/item_detail/item_detail.dart';
 
 import '../../util/helpers.dart';
@@ -28,7 +29,8 @@ void main() {
 
     testWidgets('Has an input field for title', (WidgetTester tester) async {
       await tester.pumpWidget(createItemDetailScreen());
-      expect(find.widgetWithText(TextField, 'Title'), findsOneWidget);
+      expect(find.widgetWithText(TextField, TodoItemSpec.titleFieldLabel),
+          findsOneWidget);
     });
 
     testWidgets('Has an input field for due date', (WidgetTester tester) async {

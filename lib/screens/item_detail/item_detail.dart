@@ -5,6 +5,8 @@ import 'package:tour_log/models/field_model.dart';
 import 'package:tour_log/models/field_model_visitor.dart';
 import 'package:tour_log/models/item_list_model.dart';
 import 'package:tour_log/models/item_model.dart';
+import 'package:tour_log/screens/item_detail/components/selection_field.dart';
+import 'package:tour_log/theme/style.dart';
 
 import 'components/detail_text_input_field.dart';
 
@@ -44,7 +46,6 @@ class _ItemDetailState extends State<ItemDetail> {
 
   @override
   Widget build(BuildContext context) {
-
     return WillPopScope(
       onWillPop: () {
         // Required for proper animation on quick addition of new item.
@@ -56,7 +57,12 @@ class _ItemDetailState extends State<ItemDetail> {
         appBar: AppBar(
           title: Text('Tour Details'),
         ),
-        body: ListView(children: createFieldWidgets()),
+        body: Container(
+            margin: const EdgeInsets.all(marginDetailList),
+            child: ListView(
+              shrinkWrap: true,
+              children: createFieldWidgets(),
+            )),
       ),
     );
   }
@@ -73,8 +79,8 @@ class _ItemDetailState extends State<ItemDetail> {
       return im.fields
           .map(mapField(
             onTextField: (m) => ItemDetailTextInputField(m, fieldModelChanges),
-            onSelectionField: (m) => Text(
-                'Selected: ${m.value} - ${m.spec.options.toString()}'), // FIXME
+            onSelectionField: (m) =>
+                ItemDetailSelectionField(m, fieldModelChanges),
             onDateField: (m) => Text(m.value.toIso8601String()),
           )) // FIXME
           .toList();
